@@ -64,10 +64,10 @@ repos:
     hooks:
       - id: pytest
         name: pytest
-        entry: uv run pytest
+        # Exit code 5 = no tests collected (happens in CI with --smart on clean checkout)
+        entry: bash -c 'uv run pytest --smart --tb=short -q; rc=$?; [ $rc -eq 5 ] && exit 0 || exit $rc'
         language: system
         pass_filenames: false
-        args: [--smart, --tb=short, -q]
 
   # Conventional commits
   - repo: https://github.com/compilerla/conventional-pre-commit
