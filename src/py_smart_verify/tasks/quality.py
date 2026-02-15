@@ -35,43 +35,30 @@ class QualityCompositeTask(BaseTask):
             command="(quality composite - expanded by runner)",
         )
 
-    def get_subtasks(self) -> list[str]:
-        """Get list of subtasks to run in order."""
+    def get_subtasks(self, optimized_only: bool = False) -> list[str]:
+        """Get list of subtasks to run in order.
+
+        Args:
+            optimized_only: If True, only include tasks marked as optimized.
+        """
         # Ordered by phase: formatters (0), linters (1),
         # type-checkers (2), analyzers (3)
         subtasks = []
 
-        # Get all formatters
-        for task_class in task_registry.get_by_category(TaskCategory.FORMATTER):
-            try:
-                instance = task_class(VerifyConfig())
-                subtasks.append((instance.metadata.phase, instance.metadata.name))
-            except Exception:
-                pass
-
-        # Get all linters
-        for task_class in task_registry.get_by_category(TaskCategory.LINTER):
-            try:
-                instance = task_class(VerifyConfig())
-                subtasks.append((instance.metadata.phase, instance.metadata.name))
-            except Exception:
-                pass
-
-        # Get all type checkers
-        for task_class in task_registry.get_by_category(TaskCategory.TYPE_CHECKER):
-            try:
-                instance = task_class(VerifyConfig())
-                subtasks.append((instance.metadata.phase, instance.metadata.name))
-            except Exception:
-                pass
-
-        # Get all analyzers
-        for task_class in task_registry.get_by_category(TaskCategory.ANALYZER):
-            try:
-                instance = task_class(VerifyConfig())
-                subtasks.append((instance.metadata.phase, instance.metadata.name))
-            except Exception:
-                pass
+        for category in [
+            TaskCategory.FORMATTER,
+            TaskCategory.LINTER,
+            TaskCategory.TYPE_CHECKER,
+            TaskCategory.ANALYZER,
+        ]:
+            for task_class in task_registry.get_by_category(category):
+                try:
+                    instance = task_class(VerifyConfig())
+                    if optimized_only and not instance.metadata.optimized:
+                        continue
+                    subtasks.append((instance.metadata.phase, instance.metadata.name))
+                except Exception:
+                    pass
 
         # Sort by phase, then by name
         subtasks.sort(key=lambda x: (x[0], x[1]))

@@ -11,32 +11,120 @@ from py_smart_verify.tasks.registry import register
 
 @register
 class DeprecationsTask(BaseTask):
-    """Deprecation checking task."""
+    """Deprecation checking task - detects usage of @deprecated decorated callables."""
 
     def _get_metadata(self) -> TaskMetadata:
         return TaskMetadata(
             name="deprecations",
             display_name="Deprecations",
             category=TaskCategory.ANALYZER,
-            description="Check for deprecated features",
-            tool_name="memestra",
+            description="Check for deprecated feature usage",
+            tool_name="python",
             aliases=["deprecations"],
             cache_scope="quality",
             phase=3,
         )
 
     def execute(self, paths: list[Path]) -> StepResult:
-        """Execute deprecation check."""
-        if not self.is_available():
-            return self._build_skipped("Memestra not available")
-
+        """Execute deprecation check using AST analysis."""
         log_path = self.config.log_dir / "deprecations.log"
-        # Placeholder for memestra integration
+
+        if not paths:
+            paths = [self.config.project_root]
+
+        all_py_files = []
+        for path in paths:
+            if path.is_file() and path.suffix == ".py":
+                all_py_files.append(path)
+            elif path.is_dir():
+                all_py_files.extend(path.rglob("*.py"))
+
+        issues = []
+        for py_file in all_py_files:
+            try:
+                with open(py_file) as f:
+                    tree = ast.parse(f.read(), filename=str(py_file))
+                checker = DeprecationChecker(py_file, self.config.project_root)
+                checker.visit(tree)
+                issues.extend(checker.issues)
+            except (SyntaxError, OSError):
+                pass
+
+        status = StepStatus.FAILED if issues else StepStatus.SUCCESS
+        log_path.write_text(f"Found {len(issues)} deprecation issues")
+
         return self._build_result(
-            status=StepStatus.SUCCESS,
-            command="memestra check",
+            status=status,
+            exit_code=1 if issues else 0,
+            command="analyze deprecations",
             log_path=log_path,
+            issues=issues,
         )
+
+
+class DeprecationChecker(ast.NodeVisitor):
+    """Detect usage of @deprecated decorated callables."""
+
+    DEPRECATED_MODULES = {"warnings", "typing_extensions"}
+    DEPRECATED_NAME = "deprecated"
+
+    def __init__(self, file_path: Path, project_root: Path) -> None:
+        self.file_path = file_path
+        self.project_root = project_root
+        self.issues: list[Issue] = []
+        self._deprecated_names: set[str] = set()
+        self._imported_deprecated = False
+
+    def visit_ImportFrom(self, node: ast.ImportFrom) -> None:
+        """Track imports of deprecated decorator."""
+        if node.module in self.DEPRECATED_MODULES:
+            for alias in node.names:
+                if alias.name == self.DEPRECATED_NAME:
+                    self._imported_deprecated = True
+        self.generic_visit(node)
+
+    def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+        """Check for @deprecated decorator on functions."""
+        self._check_deprecated_decorator(node)
+        self.generic_visit(node)
+
+    visit_AsyncFunctionDef = visit_FunctionDef
+
+    def visit_ClassDef(self, node: ast.ClassDef) -> None:
+        """Check for @deprecated decorator on classes."""
+        self._check_deprecated_decorator(node)
+        self.generic_visit(node)
+
+    def _check_deprecated_decorator(
+        self, node: ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef
+    ) -> None:
+        """Record names decorated with @deprecated."""
+        for decorator in node.decorator_list:
+            name = self._get_decorator_name(decorator)
+            if name == self.DEPRECATED_NAME:
+                self._deprecated_names.add(node.name)
+                self.issues.append(
+                    Issue(
+                        file=str(self.file_path.relative_to(self.project_root)),
+                        line=node.lineno,
+                        type="warning",
+                        message=f"'{node.name}' is marked as deprecated",
+                        source_task="deprecations",
+                    )
+                )
+
+    @staticmethod
+    def _get_decorator_name(node: ast.expr) -> str:
+        """Extract decorator name from AST node."""
+        if isinstance(node, ast.Name):
+            return node.id
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
+            return node.func.id
+        if isinstance(node, ast.Attribute):
+            return node.attr
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
+            return node.func.attr
+        return ""
 
 
 @register

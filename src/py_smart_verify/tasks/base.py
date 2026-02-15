@@ -40,6 +40,7 @@ class TaskMetadata:
     cache_scope: str  # "quality", "unit", "e2e"
     auto_fix: bool = False
     phase: int = 0  # execution phase
+    optimized: bool = True  # included in optimized profile
 
 
 class BaseTask(ABC):
