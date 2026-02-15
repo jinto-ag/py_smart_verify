@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "py-verify"
+name = "py-smart-verify"
 version = "1.0.0"
 description = "Professional Python verification CLI tool combining linting, type checking, and smart testing"
 readme = "README.md"
@@ -53,24 +53,24 @@ dev = ["pytest>=9.0.2", "coverage>=7.13.4"]
 mcp = ["mcp[cli]>=1.0.0"]
 
 [project.urls]
-Homepage = "https://github.com/jinto-ag/py_verify"
-Repository = "https://github.com/jinto-ag/py_verify"
-Issues = "https://github.com/jinto-ag/py_verify/issues"
+Homepage = "https://github.com/jinto-ag/py_smart_verify"
+Repository = "https://github.com/jinto-ag/py_smart_verify"
+Issues = "https://github.com/jinto-ag/py_smart_verify/issues"
 
 [project.scripts]
-py-verify = "py_verify.cli:app"
-pyv = "py_verify.cli:app"
-py-verify-mcp = "py_verify.mcp_server:main"
+py-smart-verify = "py_smart_verify.cli:app"
+pyv = "py_smart_verify.cli:app"
+py-smart-verify-mcp = "py_smart_verify.mcp_server:main"
 
 # ---------------------------------------------------------------------------
 # Build
 # ---------------------------------------------------------------------------
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/py_verify"]
+packages = ["src/py_smart_verify"]
 
 [tool.hatch.build.targets.sdist]
-include = ["src/py_verify", "tests", "pyproject.toml", "README.md", "LICENSE"]
+include = ["src/py_smart_verify", "tests", "pyproject.toml", "README.md", "LICENSE"]
 
 # ---------------------------------------------------------------------------
 # py-smart-test
@@ -78,7 +78,7 @@ include = ["src/py_verify", "tests", "pyproject.toml", "README.md", "LICENSE"]
 
 [tool.py-smart-test]
 src_dir = "src"
-packages = ["py_verify"]
+packages = ["py_smart_verify"]
 test_dir = "tests"
 default_branch = "main"
 
@@ -97,7 +97,7 @@ target-version = ["py311"]
 [tool.isort]
 profile = "black"
 line_length = 100
-known_first_party = ["py_verify"]
+known_first_party = ["py_smart_verify"]
 src_paths = ["src", "tests"]
 
 # ---------------------------------------------------------------------------
@@ -130,7 +130,7 @@ ignore = [
 "tests/**/*" = ["F841", "E402"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["py_verify"]
+known-first-party = ["py_smart_verify"]
 
 # ---------------------------------------------------------------------------
 # Mypy
@@ -142,7 +142,7 @@ strict = true
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
-packages = ["py_verify"]
+packages = ["py_smart_verify"]
 mypy_path = "src"
 
 [[tool.mypy.overrides]]
@@ -174,7 +174,7 @@ addopts = "-q --tb=short"
 # ---------------------------------------------------------------------------
 
 [tool.coverage.run]
-source = ["py_verify"]
+source = ["py_smart_verify"]
 branch = true
 
 [tool.coverage.report]

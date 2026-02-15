@@ -10,7 +10,7 @@ Use this section to tell people about which versions of your project are current
 
 ## Reporting a Vulnerability
 
-We take the security of `py-verify` seriously. If you have discovered a security vulnerability, we appreciate your help in disclosing it to us in a responsible manner.
+We take the security of `py-smart-verify` seriously. If you have discovered a security vulnerability, we appreciate your help in disclosing it to us in a responsible manner.
 
 ### Process
 
@@ -27,5 +27,5 @@ We take the security of `py-verify` seriously. If you have discovered a security
 
 ### Policy
 
-- Standard `py-verify` functionality is not considered a security vulnerability unless it allows unauthorized access or data loss beyond the scope of the tool's intended use.
+- Standard `py-smart-verify` functionality is not considered a security vulnerability unless it allows unauthorized access or data loss beyond the scope of the tool's intended use.
 - We strive to resolve all valid security issues promptly.

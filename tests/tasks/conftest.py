@@ -1,4 +1,4 @@
-"""Task-specific fixtures for py-verify tests."""
+"""Task-specific fixtures for py-smart-verify tests."""
 
 from pathlib import Path
 from types import SimpleNamespace
@@ -9,9 +9,9 @@ import pytest
 @pytest.fixture()
 def task_config(tmp_path: Path):
     """Create a SimpleNamespace config suitable for tasks."""
-    log_dir = tmp_path / ".py_verify" / "logs"
+    log_dir = tmp_path / ".py_smart_verify" / "logs"
     log_dir.mkdir(parents=True)
-    cache_dir = tmp_path / ".py_verify" / "cache"
+    cache_dir = tmp_path / ".py_smart_verify" / "cache"
     cache_dir.mkdir(parents=True)
 
     return SimpleNamespace(

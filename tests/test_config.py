@@ -1,8 +1,8 @@
-"""Tests for py_verify.config."""
+"""Tests for py_smart_verify.config."""
 
 from pathlib import Path
 
-from py_verify.config import RunMode, Severity, VerifyConfig
+from py_smart_verify.config import RunMode, Severity, VerifyConfig
 
 # --- Severity enum ---
 

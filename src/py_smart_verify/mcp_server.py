@@ -1,11 +1,11 @@
-"""MCP (Model Context Protocol) server for py-verify.
+"""MCP (Model Context Protocol) server for py-smart-verify.
 
-Exposes py-verify functionality as MCP tools and resources for
+Exposes py-smart-verify functionality as MCP tools and resources for
 integration with LLM agents (Claude, etc.).
 
 Usage:
-    py-verify-mcp          # Start MCP server (stdio transport)
-    py-verify mcp          # Alternate entry point
+    py-smart-verify-mcp          # Start MCP server (stdio transport)
+    py-smart-verify mcp          # Alternate entry point
 """
 
 import json
@@ -14,7 +14,7 @@ from pathlib import Path
 from mcp.server.fastmcp import FastMCP
 
 mcp = FastMCP(
-    name="py-verify",
+    name="py-smart-verify",
     instructions="Python verification tool - linting, type checking, and smart testing",
 )
 
@@ -38,8 +38,8 @@ def verify(
 
     Returns structured JSON with all step results, issues found, and timing.
     """
-    from py_verify.config import RunMode, VerifyConfig
-    from py_verify.runner import VerifyRunner
+    from py_smart_verify.config import RunMode, VerifyConfig
+    from py_smart_verify.runner import VerifyRunner
 
     config = VerifyConfig(
         tasks=tasks or [],
@@ -66,8 +66,8 @@ def graph(paths: list[str] | None = None) -> str:
 
     Returns JSON with all modules, their imports, and any circular dependencies.
     """
-    from py_verify.discovery import PathDiscovery
-    from py_verify.graph import DependencyGraphBuilder
+    from py_smart_verify.discovery import PathDiscovery
+    from py_smart_verify.graph import DependencyGraphBuilder
 
     project_root = Path.cwd()
     discovery = PathDiscovery(project_root)
@@ -140,8 +140,8 @@ def list_tasks() -> str:
 
     Returns JSON array of task objects with name, category, description, etc.
     """
-    from py_verify.config import VerifyConfig
-    from py_verify.tasks import task_registry
+    from py_smart_verify.config import VerifyConfig
+    from py_smart_verify.tasks import task_registry
 
     tasks_info = []
     for name in sorted(task_registry.all_names()):
@@ -177,13 +177,13 @@ def list_tasks() -> str:
 def last_run_resource() -> str:
     """Last verification run result.
 
-    Reads from .py_verify/last_run.json. Returns the full RunResult
+    Reads from .py_smart_verify/last_run.json. Returns the full RunResult
     including all step results, issues, and timing information.
     """
-    last_run_path = Path.cwd() / ".py_verify" / "last_run.json"
+    last_run_path = Path.cwd() / ".py_smart_verify" / "last_run.json"
     if last_run_path.exists():
         return last_run_path.read_text()
-    return json.dumps({"error": "No previous run found. Run 'py-verify verify' first."})
+    return json.dumps({"error": "No previous run found. Run 'py-smart-verify verify' first."})
 
 
 @mcp.resource("pyverify://graph")
@@ -192,8 +192,8 @@ def graph_resource() -> str:
 
     Builds the graph fresh from the source files and returns it as JSON.
     """
-    from py_verify.discovery import PathDiscovery
-    from py_verify.graph import DependencyGraphBuilder
+    from py_smart_verify.discovery import PathDiscovery
+    from py_smart_verify.graph import DependencyGraphBuilder
 
     project_root = Path.cwd()
     discovery = PathDiscovery(project_root)
@@ -221,9 +221,9 @@ def config_resource() -> str:
 
     Shows the default VerifyConfig values and detected project structure.
     """
-    from py_verify.config import VerifyConfig
-    from py_verify.discovery import PathDiscovery
-    from py_verify.venv import VenvManager
+    from py_smart_verify.config import VerifyConfig
+    from py_smart_verify.discovery import PathDiscovery
+    from py_smart_verify.venv import VenvManager
 
     project_root = Path.cwd()
     config = VerifyConfig(project_root=project_root)

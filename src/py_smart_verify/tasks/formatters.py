@@ -1,10 +1,10 @@
-"""Formatter tasks for py-verify."""
+"""Formatter tasks for py-smart-verify."""
 
 from pathlib import Path
 
-from py_verify.models import StepResult, StepStatus
-from py_verify.tasks.base import BaseTask, TaskCategory, TaskMetadata
-from py_verify.tasks.registry import register
+from py_smart_verify.models import StepResult, StepStatus
+from py_smart_verify.tasks.base import BaseTask, TaskCategory, TaskMetadata
+from py_smart_verify.tasks.registry import register
 
 
 @register

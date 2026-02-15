@@ -7,15 +7,15 @@ from pathlib import Path
 from rich.console import Console
 from typer.testing import CliRunner
 
-import py_verify.cli
-import py_verify.console
-import py_verify.runner
-from py_verify.cli import _build_verify_config, app
-from py_verify.config import VerifyConfig
-from py_verify.models import RunResult, StepResult, StepStatus
-from py_verify.runner import VerifyRunner
-from py_verify.tasks.base import BaseTask, TaskCategory, TaskMetadata
-from py_verify.tasks.registry import TaskRegistry
+import py_smart_verify.cli
+import py_smart_verify.console
+import py_smart_verify.runner
+from py_smart_verify.cli import _build_verify_config, app
+from py_smart_verify.config import VerifyConfig
+from py_smart_verify.models import RunResult, StepResult, StepStatus
+from py_smart_verify.runner import VerifyRunner
+from py_smart_verify.tasks.base import BaseTask, TaskCategory, TaskMetadata
+from py_smart_verify.tasks.registry import TaskRegistry
 
 cli_runner = CliRunner()
 
@@ -54,8 +54,8 @@ def _make_mock_runner(exit_code: int = 0):
 def _make_config(tmp_path: Path, **overrides) -> VerifyConfig:
     defaults = {
         "project_root": tmp_path,
-        "cache_dir": tmp_path / ".py_verify" / "cache",
-        "log_dir": tmp_path / ".py_verify" / "logs",
+        "cache_dir": tmp_path / ".py_smart_verify" / "cache",
+        "log_dir": tmp_path / ".py_smart_verify" / "logs",
         "tasks": ["fake"],
     }
     defaults.update(overrides)
@@ -64,12 +64,12 @@ def _make_config(tmp_path: Path, **overrides) -> VerifyConfig:
 
 def _silence_console(monkeypatch):
     """Silence all console output and return capture buffer."""
-    from py_verify.console import get_theme
+    from py_smart_verify.console import get_theme
 
     buf = StringIO()
     test_console = Console(file=buf, theme=get_theme(), width=120)
-    monkeypatch.setattr(py_verify.console, "console", test_console)
-    monkeypatch.setattr(py_verify.runner, "console", test_console)
+    monkeypatch.setattr(py_smart_verify.console, "console", test_console)
+    monkeypatch.setattr(py_smart_verify.runner, "console", test_console)
     return buf
 
 
@@ -152,7 +152,7 @@ class TestRunnerJsonMode:
 
         reg = TaskRegistry()
         reg.register(FakeTask)
-        monkeypatch.setattr(py_verify.runner, "task_registry", reg)
+        monkeypatch.setattr(py_smart_verify.runner, "task_registry", reg)
 
         buf = _silence_console(monkeypatch)
         config = _make_config(tmp_path, tasks=["fake"], no_cache=True, json_mode=True)
@@ -163,7 +163,7 @@ class TestRunnerJsonMode:
         runner_inst.run()
         output = buf.getvalue()
         # Should have no banner or step output
-        assert "py-verify" not in output.lower() or output.strip() == ""
+        assert "py-smart-verify" not in output.lower() or output.strip() == ""
 
     def test_json_mode_still_writes_last_run(self, monkeypatch, tmp_path: Path):
         """last_run.json is still written in json_mode."""
@@ -173,7 +173,7 @@ class TestRunnerJsonMode:
 
         reg = TaskRegistry()
         reg.register(FakeTask)
-        monkeypatch.setattr(py_verify.runner, "task_registry", reg)
+        monkeypatch.setattr(py_smart_verify.runner, "task_registry", reg)
 
         _silence_console(monkeypatch)
         config = _make_config(tmp_path, tasks=["fake"], no_cache=True, json_mode=True)
@@ -181,7 +181,7 @@ class TestRunnerJsonMode:
         src.mkdir()
         (src / "mod.py").write_text("x = 1\n")
         VerifyRunner(config).run()
-        json_path = tmp_path / ".py_verify" / "last_run.json"
+        json_path = tmp_path / ".py_smart_verify" / "last_run.json"
         assert json_path.exists()
 
     def test_run_and_get_result(self, monkeypatch, tmp_path: Path):
@@ -192,7 +192,7 @@ class TestRunnerJsonMode:
 
         reg = TaskRegistry()
         reg.register(FakeTask)
-        monkeypatch.setattr(py_verify.runner, "task_registry", reg)
+        monkeypatch.setattr(py_smart_verify.runner, "task_registry", reg)
 
         _silence_console(monkeypatch)
         config = _make_config(tmp_path, tasks=["fake"], no_cache=True, json_mode=True)
@@ -210,7 +210,7 @@ class TestRunnerJsonMode:
 class TestVerifyJsonCLI:
     def test_json_flag_outputs_json(self, monkeypatch, tmp_path: Path):
         """verify --json outputs valid JSON to stdout."""
-        monkeypatch.setattr(py_verify.cli, "VerifyRunner", _make_mock_runner(0))
+        monkeypatch.setattr(py_smart_verify.cli, "VerifyRunner", _make_mock_runner(0))
         monkeypatch.setattr(Path, "cwd", lambda: tmp_path)
         result = cli_runner.invoke(app, ["verify", "--json", "quality"])
         assert result.exit_code == 0
@@ -221,7 +221,7 @@ class TestVerifyJsonCLI:
 
     def test_json_flag_preserves_exit_code(self, monkeypatch, tmp_path: Path):
         """Exit code is 1 on failure even with --json."""
-        monkeypatch.setattr(py_verify.cli, "VerifyRunner", _make_mock_runner(1))
+        monkeypatch.setattr(py_smart_verify.cli, "VerifyRunner", _make_mock_runner(1))
         monkeypatch.setattr(Path, "cwd", lambda: tmp_path)
         result = cli_runner.invoke(app, ["verify", "--json", "quality"])
         assert result.exit_code == 1
@@ -230,7 +230,7 @@ class TestVerifyJsonCLI:
 
     def test_json_output_has_step_details(self, monkeypatch, tmp_path: Path):
         """JSON output includes step name and status."""
-        monkeypatch.setattr(py_verify.cli, "VerifyRunner", _make_mock_runner(0))
+        monkeypatch.setattr(py_smart_verify.cli, "VerifyRunner", _make_mock_runner(0))
         monkeypatch.setattr(Path, "cwd", lambda: tmp_path)
         result = cli_runner.invoke(app, ["verify", "--json", "quality"])
         data = json.loads(result.output)
@@ -239,7 +239,7 @@ class TestVerifyJsonCLI:
 
     def test_no_json_flag_no_json_output(self, monkeypatch, tmp_path: Path):
         """Without --json, output is not JSON."""
-        monkeypatch.setattr(py_verify.cli, "VerifyRunner", _make_mock_runner(0))
+        monkeypatch.setattr(py_smart_verify.cli, "VerifyRunner", _make_mock_runner(0))
         monkeypatch.setattr(Path, "cwd", lambda: tmp_path)
         result = cli_runner.invoke(app, ["verify", "quality"])
         assert result.exit_code == 0
@@ -300,7 +300,7 @@ class TestMCPCommand:
             raise ImportError("No module named 'mcp'")
 
         monkeypatch.setattr(
-            py_verify.cli,
+            py_smart_verify.cli,
             "mcp",
             lambda: (_ for _ in ()).throw(ImportError("No module named 'mcp'")),
         )
@@ -310,7 +310,7 @@ class TestMCPCommand:
         original_import = builtins.__import__
 
         def blocking_import(name, *args, **kwargs):
-            if name == "py_verify.mcp_server":
+            if name == "py_smart_verify.mcp_server":
                 raise ImportError("No module named 'mcp'")
             return original_import(name, *args, **kwargs)
 

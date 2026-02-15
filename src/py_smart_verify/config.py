@@ -1,4 +1,4 @@
-"""Configuration models for py-verify."""
+"""Configuration models for py-smart-verify."""
 
 from enum import IntEnum, StrEnum
 from pathlib import Path
@@ -24,7 +24,7 @@ class RunMode(StrEnum):
 
 
 class VerifyConfig(BaseModel):
-    """Configuration for py-verify runner."""
+    """Configuration for py-smart-verify runner."""
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -63,11 +63,11 @@ class VerifyConfig(BaseModel):
     # Paths and directories
     project_root: Path = Field(default_factory=Path.cwd, description="Project root")
     cache_dir: Path = Field(
-        default_factory=lambda: Path.cwd() / ".py_verify" / "cache",
+        default_factory=lambda: Path.cwd() / ".py_smart_verify" / "cache",
         description="Cache directory",
     )
     log_dir: Path = Field(
-        default_factory=lambda: Path.cwd() / ".py_verify" / "logs",
+        default_factory=lambda: Path.cwd() / ".py_smart_verify" / "logs",
         description="Log directory",
     )
 

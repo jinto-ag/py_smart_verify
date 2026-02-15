@@ -1,4 +1,4 @@
-"""Base task classes for py-verify."""
+"""Base task classes for py-smart-verify."""
 
 import shutil
 import subprocess
@@ -9,10 +9,10 @@ from enum import StrEnum
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from py_verify.models import Issue, StepResult, StepStatus
+from py_smart_verify.models import Issue, StepResult, StepStatus
 
 if TYPE_CHECKING:
-    from py_verify.config import VerifyConfig
+    from py_smart_verify.config import VerifyConfig
 
 
 class TaskCategory(StrEnum):

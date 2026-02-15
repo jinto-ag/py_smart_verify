@@ -1,8 +1,8 @@
-"""Tests for py_verify.tasks.self_test."""
+"""Tests for py_smart_verify.tasks.self_test."""
 
-from py_verify.models import StepStatus
-from py_verify.tasks.base import TaskCategory
-from py_verify.tasks.self_test import SelfTestTask
+from py_smart_verify.models import StepStatus
+from py_smart_verify.tasks.base import TaskCategory
+from py_smart_verify.tasks.self_test import SelfTestTask
 
 
 class TestSelfTestTask:
@@ -28,7 +28,7 @@ class TestSelfTestTask:
     def test_result_output(self, task_config):
         task = SelfTestTask(task_config)
         result = task.execute([])
-        assert result.command == "py-verify self-test"
+        assert result.command == "py-smart-verify self-test"
 
     def test_cache_dir_missing(self, task_config):
         """Test when cache_dir doesn't exist but parent does."""

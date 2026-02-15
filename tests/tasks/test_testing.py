@@ -1,10 +1,10 @@
-"""Tests for py_verify.tasks.testing."""
+"""Tests for py_smart_verify.tasks.testing."""
 
 import subprocess
 
-from py_verify.models import StepStatus
-from py_verify.tasks.base import TaskCategory
-from py_verify.tasks.testing import (
+from py_smart_verify.models import StepStatus
+from py_smart_verify.tasks.base import TaskCategory
+from py_smart_verify.tasks.testing import (
     AffectedTestsTask,
     E2ETestTask,
     FullE2ETestTask,

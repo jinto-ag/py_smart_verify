@@ -1,4 +1,4 @@
-"""Caching system for py-verify."""
+"""Caching system for py-smart-verify."""
 
 import hashlib
 from pathlib import Path

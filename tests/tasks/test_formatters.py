@@ -1,11 +1,11 @@
-"""Tests for py_verify.tasks.formatters."""
+"""Tests for py_smart_verify.tasks.formatters."""
 
 import shutil
 import subprocess
 
-from py_verify.models import StepStatus
-from py_verify.tasks.base import TaskCategory
-from py_verify.tasks.formatters import FormatTask, IsortTask, RuffFixTask
+from py_smart_verify.models import StepStatus
+from py_smart_verify.tasks.base import TaskCategory
+from py_smart_verify.tasks.formatters import FormatTask, IsortTask, RuffFixTask
 
 
 class TestFormatTask:

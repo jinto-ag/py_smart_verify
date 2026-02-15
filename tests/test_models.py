@@ -1,9 +1,9 @@
-"""Tests for py_verify.models."""
+"""Tests for py_smart_verify.models."""
 
 import json
 from pathlib import Path
 
-from py_verify.models import (
+from py_smart_verify.models import (
     DependencyGraph,
     DependencyNode,
     Issue,

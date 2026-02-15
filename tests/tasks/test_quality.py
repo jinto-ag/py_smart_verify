@@ -1,9 +1,9 @@
-"""Tests for py_verify.tasks.quality."""
+"""Tests for py_smart_verify.tasks.quality."""
 
-from py_verify.models import StepStatus
-from py_verify.tasks.base import TaskCategory
-from py_verify.tasks.quality import QualityCompositeTask
-from py_verify.tasks.registry import TaskRegistry
+from py_smart_verify.models import StepStatus
+from py_smart_verify.tasks.base import TaskCategory
+from py_smart_verify.tasks.quality import QualityCompositeTask
+from py_smart_verify.tasks.registry import TaskRegistry
 
 
 class TestQualityCompositeTask:
@@ -62,7 +62,7 @@ class TestQualityCompositeTask:
 
     def test_get_subtasks_handles_broken_task(self, task_config, monkeypatch):
         """Tasks that raise during instantiation are silently skipped."""
-        import py_verify.tasks.quality as quality_mod
+        import py_smart_verify.tasks.quality as quality_mod
 
         class BrokenClass:
             def __init__(self, config):

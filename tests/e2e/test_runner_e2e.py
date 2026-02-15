@@ -1,4 +1,4 @@
-"""End-to-end runner tests for py-verify.
+"""End-to-end runner tests for py-smart-verify.
 
 These tests use the real VerifyRunner with real task execution — no mocking.
 Covers all tasks and config option combinations.
@@ -7,17 +7,17 @@ Covers all tasks and config option combinations.
 import json
 from pathlib import Path
 
-from py_verify.config import RunMode, Severity, VerifyConfig
-from py_verify.models import StepStatus
-from py_verify.runner import VerifyRunner
+from py_smart_verify.config import RunMode, Severity, VerifyConfig
+from py_smart_verify.models import StepStatus
+from py_smart_verify.runner import VerifyRunner
 
 
 def _make_config(project_root: Path, **overrides) -> VerifyConfig:
     """Build a VerifyConfig pointing at the given project."""
     defaults = {
         "project_root": project_root,
-        "cache_dir": project_root / ".py_verify" / "cache",
-        "log_dir": project_root / ".py_verify" / "logs",
+        "cache_dir": project_root / ".py_smart_verify" / "cache",
+        "log_dir": project_root / ".py_smart_verify" / "logs",
         "no_cache": True,
     }
     defaults.update(overrides)
@@ -46,7 +46,7 @@ class TestRunnerSelfTest:
         config = _make_config(e2e_project, tasks=["self-test"])
         runner = VerifyRunner(config)
         runner.run_and_get_result()
-        last_run = e2e_project / ".py_verify" / "last_run.json"
+        last_run = e2e_project / ".py_smart_verify" / "last_run.json"
         assert last_run.exists()
         data = json.loads(last_run.read_text())
         assert "run_id" in data
@@ -68,7 +68,7 @@ class TestRunnerJsonMode:
         runner = VerifyRunner(config)
         runner.run_and_get_result()
         captured = capsys.readouterr()
-        assert "py-verify" not in captured.out.lower() or captured.out.strip() == ""
+        assert "py-smart-verify" not in captured.out.lower() or captured.out.strip() == ""
 
     def test_no_step_output(self, e2e_project: Path, capsys):
         config = _make_config(e2e_project, tasks=["self-test"], json_mode=True)
@@ -81,7 +81,7 @@ class TestRunnerJsonMode:
         config = _make_config(e2e_project, tasks=["self-test"], json_mode=True)
         runner = VerifyRunner(config)
         runner.run_and_get_result()
-        last_run = e2e_project / ".py_verify" / "last_run.json"
+        last_run = e2e_project / ".py_smart_verify" / "last_run.json"
         assert last_run.exists()
 
 
@@ -361,8 +361,8 @@ class TestRunnerEdgeCases:
         """Project with no Python files."""
         (tmp_path / ".git").mkdir()
         (tmp_path / "pyproject.toml").write_text("[project]\nname='empty'\n")
-        (tmp_path / ".py_verify" / "cache").mkdir(parents=True)
-        (tmp_path / ".py_verify" / "logs").mkdir(parents=True)
+        (tmp_path / ".py_smart_verify" / "cache").mkdir(parents=True)
+        (tmp_path / ".py_smart_verify" / "logs").mkdir(parents=True)
         config = _make_config(tmp_path, tasks=["self-test"])
         runner = VerifyRunner(config)
         exit_code, _ = runner.run_and_get_result()

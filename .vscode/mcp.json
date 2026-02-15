@@ -1,8 +1,8 @@
 {
   "servers": {
-    "py-verify": {
+    "py-smart-verify": {
       "type": "stdio",
-      "command": "py-verify-mcp"
+      "command": "py-smart-verify-mcp"
     }
   }
 }

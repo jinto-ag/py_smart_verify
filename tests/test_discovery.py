@@ -1,8 +1,8 @@
-"""Tests for py_verify.discovery."""
+"""Tests for py_smart_verify.discovery."""
 
 from pathlib import Path
 
-from py_verify.discovery import PathDiscovery
+from py_smart_verify.discovery import PathDiscovery
 
 
 class TestResolverPaths:

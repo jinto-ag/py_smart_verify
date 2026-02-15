@@ -1,11 +1,11 @@
-"""Git integration for py-verify."""
+"""Git integration for py-smart-verify."""
 
 import subprocess
 from pathlib import Path
 
 
 class GitIntegration:
-    """Manages Git operations for py-verify."""
+    """Manages Git operations for py-smart-verify."""
 
     def __init__(self, project_root: Path = Path.cwd()) -> None:  # noqa: B008
         """Initialize Git integration."""

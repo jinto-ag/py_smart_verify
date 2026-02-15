@@ -1,22 +1,22 @@
-"""Self-test task for py-verify."""
+"""Self-test task for py-smart-verify."""
 
 from pathlib import Path
 
-from py_verify.models import StepResult, StepStatus
-from py_verify.tasks.base import BaseTask, TaskCategory, TaskMetadata
-from py_verify.tasks.registry import register, task_registry
+from py_smart_verify.models import StepResult, StepStatus
+from py_smart_verify.tasks.base import BaseTask, TaskCategory, TaskMetadata
+from py_smart_verify.tasks.registry import register, task_registry
 
 
 @register
 class SelfTestTask(BaseTask):
-    """Self-test task that validates py-verify itself."""
+    """Self-test task that validates py-smart-verify itself."""
 
     def _get_metadata(self) -> TaskMetadata:
         return TaskMetadata(
             name="self-test",
             display_name="Self-Test",
             category=TaskCategory.META,
-            description="Validate py-verify configuration and registry",
+            description="Validate py-smart-verify configuration and registry",
             tool_name="python",
             aliases=["self-test"],
             cache_scope="meta",
@@ -77,7 +77,7 @@ class SelfTestTask(BaseTask):
         return self._build_result(
             status=status,
             exit_code=0 if all_passed else 1,
-            command="py-verify self-test",
+            command="py-smart-verify self-test",
             log_path=log_path,
             output="\n".join(results),
         )

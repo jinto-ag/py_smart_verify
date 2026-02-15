@@ -1,11 +1,11 @@
-"""Tests for py_verify.tasks.analyzers."""
+"""Tests for py_smart_verify.tasks.analyzers."""
 
 import ast
 import shutil
 from pathlib import Path
 
-from py_verify.models import StepStatus
-from py_verify.tasks.analyzers import (
+from py_smart_verify.models import StepStatus
+from py_smart_verify.tasks.analyzers import (
     ArchitectureChecker,
     ArchitectureTask,
     CircularDepsTask,
@@ -15,7 +15,7 @@ from py_verify.tasks.analyzers import (
     StandardsChecker,
     StandardsTask,
 )
-from py_verify.tasks.base import TaskCategory
+from py_smart_verify.tasks.base import TaskCategory
 
 # --- DeprecationsTask ---
 

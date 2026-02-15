@@ -1,4 +1,4 @@
-"""End-to-end CLI tests for py-verify.
+"""End-to-end CLI tests for py-smart-verify.
 
 These tests invoke the CLI through typer.testing.CliRunner with
 the real VerifyRunner — no mocking. Covers all commands with
@@ -12,7 +12,7 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from py_verify.cli import app
+from py_smart_verify.cli import app
 
 runner = CliRunner()
 
@@ -49,10 +49,10 @@ class TestVerifySelfTest:
         assert not rich_tag.search(result.output)
 
     def test_writes_last_run_json(self, monkeypatch, e2e_project: Path):
-        """verify writes .py_verify/last_run.json."""
+        """verify writes .py_smart_verify/last_run.json."""
         monkeypatch.setattr(Path, "cwd", lambda: e2e_project)
         runner.invoke(app, ["verify", "--no-cache", "self-test"])
-        last_run = e2e_project / ".py_verify" / "last_run.json"
+        last_run = e2e_project / ".py_smart_verify" / "last_run.json"
         assert last_run.exists()
         data = json.loads(last_run.read_text())
         assert "run_id" in data
@@ -558,7 +558,7 @@ class TestVersionAndHelp:
     def test_version_flag(self):
         result = runner.invoke(app, ["verify", "--version"])
         assert result.exit_code == 0
-        assert "py-verify" in result.output
+        assert "py-smart-verify" in result.output
 
     def test_no_args_shows_help(self):
         result = runner.invoke(app, [])

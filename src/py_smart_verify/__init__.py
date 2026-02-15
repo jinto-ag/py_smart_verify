@@ -1,0 +1,4 @@
+"""py-smart-verify: Professional Python verification CLI tool."""
+
+__version__ = "1.0.0"
+__app_name__ = "py-smart-verify"

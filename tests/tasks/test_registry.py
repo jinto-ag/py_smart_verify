@@ -1,10 +1,10 @@
-"""Tests for py_verify.tasks.registry."""
+"""Tests for py_smart_verify.tasks.registry."""
 
 from pathlib import Path
 
-from py_verify.models import StepResult
-from py_verify.tasks.base import BaseTask, TaskCategory, TaskMetadata
-from py_verify.tasks.registry import TaskRegistry
+from py_smart_verify.models import StepResult
+from py_smart_verify.tasks.base import BaseTask, TaskCategory, TaskMetadata
+from py_smart_verify.tasks.registry import TaskRegistry
 
 
 class DummyTask(BaseTask):

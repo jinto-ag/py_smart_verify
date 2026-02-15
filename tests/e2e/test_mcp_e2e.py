@@ -1,4 +1,4 @@
-"""End-to-end MCP server tests for py-verify.
+"""End-to-end MCP server tests for py-smart-verify.
 
 These tests call MCP tool functions directly with real execution — no mocking
 (except for subprocess-based tools like affected/regen_graph).
@@ -14,7 +14,7 @@ import pytest
 
 pytest.importorskip("mcp")
 
-from py_verify.mcp_server import (  # isort: skip
+from py_smart_verify.mcp_server import (  # isort: skip
     affected,
     config_resource,
     graph,
@@ -26,7 +26,7 @@ from py_verify.mcp_server import (  # isort: skip
     tasks_resource,
     verify,
 )
-from py_verify.mcp_server import mcp as mcp_instance  # isort: skip
+from py_smart_verify.mcp_server import mcp as mcp_instance  # isort: skip
 
 # ─── verify tool ─────────────────────────────────────────────────────────
 
@@ -316,8 +316,8 @@ class TestMCPListTasksTool:
 
 class TestMCPLastRunResource:
     def test_reads_existing(self, monkeypatch, e2e_project: Path):
-        """Reads .py_verify/last_run.json when it exists."""
-        last_run = e2e_project / ".py_verify" / "last_run.json"
+        """Reads .py_smart_verify/last_run.json when it exists."""
+        last_run = e2e_project / ".py_smart_verify" / "last_run.json"
         last_run.write_text(json.dumps({"run_id": "abc", "status": "success"}))
         monkeypatch.setattr(Path, "cwd", lambda: e2e_project)
         result = last_run_resource()
@@ -326,7 +326,7 @@ class TestMCPLastRunResource:
 
     def test_error_when_no_file(self, monkeypatch, tmp_path: Path):
         """Returns error JSON when no last_run.json exists."""
-        (tmp_path / ".py_verify").mkdir(parents=True, exist_ok=True)
+        (tmp_path / ".py_smart_verify").mkdir(parents=True, exist_ok=True)
         monkeypatch.setattr(Path, "cwd", lambda: tmp_path)
         result = last_run_resource()
         data = json.loads(result)
@@ -398,7 +398,7 @@ class TestMCPConfigResource:
 class TestMCPInstance:
     def test_name(self):
         """MCP server has correct name."""
-        assert mcp_instance.name == "py-verify"
+        assert mcp_instance.name == "py-smart-verify"
 
     def test_main_callable(self):
         """main() is callable."""

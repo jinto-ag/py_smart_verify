@@ -1,10 +1,10 @@
-"""Tests for py_verify.venv."""
+"""Tests for py_smart_verify.venv."""
 
 import shutil
 import subprocess
 from pathlib import Path
 
-from py_verify.venv import VenvManager
+from py_smart_verify.venv import VenvManager
 
 
 class TestDetectVenv:

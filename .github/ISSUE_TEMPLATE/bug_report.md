@@ -26,7 +26,7 @@ If applicable, add terminal output to help explain your problem.
 
 - OS: [e.g. Ubuntu 22.04, macOS 14.2]
 - Python version: [e.g. 3.11]
-- `py-verify` version: [e.g. 0.1.0]
+- `py-smart-verify` version: [e.g. 0.1.0]
 
 **Additional context**
 Add any other context about the problem here.

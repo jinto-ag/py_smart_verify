@@ -1,4 +1,4 @@
-"""Rich console output for py-verify."""
+"""Rich console output for py-smart-verify."""
 
 import sys
 
@@ -7,7 +7,7 @@ from rich.table import Table
 from rich.theme import Theme
 from rich.tree import Tree
 
-from py_verify.models import DependencyGraph, Issue, RunResult, StepResult, StepStatus
+from py_smart_verify.models import DependencyGraph, Issue, RunResult, StepResult, StepStatus
 
 # Use ASCII fallbacks on Windows when the console can't handle Unicode
 _UNICODE_SAFE = sys.platform != "win32" or sys.stdout.encoding in ("utf-8", "utf8")
@@ -22,7 +22,7 @@ ICONS = {
 
 
 def get_theme() -> Theme:
-    """Build and return the py-verify Rich theme."""
+    """Build and return the py-smart-verify Rich theme."""
     return Theme(
         {
             "success": "bold green",
@@ -42,9 +42,9 @@ err_console = Console(stderr=True, theme=get_theme())
 
 
 def print_banner() -> None:
-    """Print py-verify banner."""
+    """Print py-smart-verify banner."""
     console.print(
-        "[bold cyan]py-verify[/bold cyan] - Professional Python Verification Tool",
+        "[bold cyan]py-smart-verify[/bold cyan] - Professional Python Verification Tool",
         justify="center",
     )
     console.print()
