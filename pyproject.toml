@@ -1,0 +1,251 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "py-verify"
+version = "1.0.0"
+description = "Professional Python verification CLI tool combining linting, type checking, and smart testing"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Jinto AG" }]
+keywords = [
+    "linting",
+    "type-checking",
+    "testing",
+    "verification",
+    "cli",
+    "quality",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Software Development :: Testing",
+    "Typing :: Typed",
+]
+dependencies = [
+    "pydantic>=2.12.5",
+    "rich>=14.3.2",
+    "typer>=0.23.1",
+    "py-smart-test>=1.3.0",
+]
+
+[project.optional-dependencies]
+all-tools = [
+    "black>=26.1.0",
+    "coverage>=7.13.4",
+    "flake8>=7.3.0",
+    "isort>=7.0.0",
+    "pylance>=2.0.1",
+    "pyright>=1.1.408",
+    "pytest>=9.0.2",
+    "ruff>=0.15.1",
+]
+dev = ["pytest>=9.0.2", "coverage>=7.13.4"]
+mcp = ["mcp[cli]>=1.0.0"]
+
+[project.urls]
+Homepage = "https://github.com/jinto-ag/py_verify"
+Repository = "https://github.com/jinto-ag/py_verify"
+Issues = "https://github.com/jinto-ag/py_verify/issues"
+
+[project.scripts]
+py-verify = "py_verify.cli:app"
+pyv = "py_verify.cli:app"
+py-verify-mcp = "py_verify.mcp_server:main"
+
+# ---------------------------------------------------------------------------
+# Build
+# ---------------------------------------------------------------------------
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/py_verify"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/py_verify", "tests", "pyproject.toml", "README.md", "LICENSE"]
+
+# ---------------------------------------------------------------------------
+# py-smart-test
+# ---------------------------------------------------------------------------
+
+[tool.py-smart-test]
+src_dir = "src"
+packages = ["py_verify"]
+test_dir = "tests"
+default_branch = "main"
+
+# ---------------------------------------------------------------------------
+# Ruff (linter + formatter)
+# ---------------------------------------------------------------------------
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "SIM", # flake8-simplify
+    "RUF", # ruff-specific rules
+]
+ignore = [
+    "E501",   # line too long (handled by formatter)
+    "SIM108", # ternary operator (readability preference)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["py_verify"]
+
+# ---------------------------------------------------------------------------
+# Mypy
+# ---------------------------------------------------------------------------
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+packages = ["py_verify"]
+mypy_path = "src"
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+allow_untyped_defs = true
+
+# ---------------------------------------------------------------------------
+# Basedpyright
+# ---------------------------------------------------------------------------
+
+[tool.basedpyright]
+pythonVersion = "3.11"
+typeCheckingMode = "standard"
+venvPath = "."
+venv = ".venv"
+
+# ---------------------------------------------------------------------------
+# Pytest
+# ---------------------------------------------------------------------------
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q --tb=short"
+
+# ---------------------------------------------------------------------------
+# Coverage
+# ---------------------------------------------------------------------------
+
+[tool.coverage.run]
+source = ["py_verify"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.",
+    "if TYPE_CHECKING:",
+    "pass",
+    "\\.\\.\\.",
+]
+
+# ---------------------------------------------------------------------------
+# Dependency groups (PEP 735)
+# ---------------------------------------------------------------------------
+
+[dependency-groups]
+dev = [
+    "basedpyright>=1.38.0",
+    "black>=26.1.0",
+    "commitizen>=4.1.0",
+    "coverage>=7.13.4",
+    "flake8>=7.3.0",
+    "git-cliff>=2.6.1",
+    "interrogate>=1.7.0",
+    "isort>=7.0.0",
+    "mcp[cli]>=1.0.0",
+    "mypy>=1.19.1",
+    "pip-audit>=2.10.0",
+    "pip-licenses>=5.5.1",
+    "pre-commit>=4.0.1",
+    "pyflakes>=3.4.0",
+    "pylance>=2.0.1",
+    "pyright>=1.1.408",
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "ruff>=0.15.1",
+]
+
+# ---------------------------------------------------------------------------
+# Commitizen (conventional commits)
+# ---------------------------------------------------------------------------
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "1.0.0"
+tag_format = "v$version"
+changelog_file = "CHANGELOG.md"
+update_changelog_on_bump = true
+major_version_zero = true
+
+[tool.commitizen.customize]
+message_template = "{{change_type}}{{scope}}: {{message}}\n\n{{body}}"
+schema_pattern = "(?s)(build|ci|docs|feat|fix|perf|refactor|style|test|chore|revert)(\\((?P<scope>[\\w\\-]+)\\))?!?(?P<breaking>!)?:\\s(?P<subject>[\\w\\s]+)(?:\\n\\n(?P<body>.*))?"
+
+[[tool.commitizen.customize.questions]]
+type = "list"
+name = "change_type"
+message = "Select the type of change you are committing"
+choices = [
+    { value = "feat", name = "feat: A new feature" },
+    { value = "fix", name = "fix: A bug fix" },
+    { value = "docs", name = "docs: Documentation only changes" },
+    { value = "style", name = "style: Changes that do not affect the meaning of the code" },
+    { value = "refactor", name = "refactor: A code change that neither fixes a bug nor adds a feature" },
+    { value = "perf", name = "perf: A code change that improves performance" },
+    { value = "test", name = "test: Adding missing or correcting existing tests" },
+    { value = "build", name = "build: Changes that affect the build system or external dependencies" },
+    { value = "ci", name = "ci: Changes to CI configuration files and scripts" },
+    { value = "chore", name = "chore: Other changes that don't modify src or test files" },
+    { value = "revert", name = "revert: Revert to a commit" },
+]
+
+[[tool.commitizen.customize.questions]]
+type = "list"
+name = "scope"
+message = "Select the scope of this change"
+choices = [
+    { value = "core", name = "core: Core functionality and main logic" },
+    { value = "tasks", name = "tasks: Verification tasks (linters, type checkers, analyzers)" },
+    { value = "cli", name = "cli: CLI interface and commands" },
+    { value = "config", name = "config: Configuration and setup files" },
+    { value = "ci", name = "ci: CI/CD and development tooling" },
+    { value = "docs", name = "docs: Documentation and README" },
+]
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "message"
+message = "Write a short, imperative tense description of the change"
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "body"
+message = "Provide a longer description of the change (optional)"

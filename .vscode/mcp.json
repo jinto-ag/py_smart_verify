@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "py-verify": {
+      "type": "stdio",
+      "command": "py-verify-mcp"
+    }
+  }
+}
