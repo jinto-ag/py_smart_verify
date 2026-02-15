@@ -2,6 +2,7 @@
 
 import ast
 from pathlib import Path
+from typing import ClassVar
 
 from py_smart_verify.graph import DependencyGraphBuilder
 from py_smart_verify.models import Issue, StepResult, StepStatus
@@ -65,7 +66,7 @@ class DeprecationsTask(BaseTask):
 class DeprecationChecker(ast.NodeVisitor):
     """Detect usage of @deprecated decorated callables."""
 
-    DEPRECATED_MODULES = {"warnings", "typing_extensions"}
+    DEPRECATED_MODULES: ClassVar[set[str]] = {"warnings", "typing_extensions"}
     DEPRECATED_NAME = "deprecated"
 
     def __init__(self, file_path: Path, project_root: Path) -> None:
