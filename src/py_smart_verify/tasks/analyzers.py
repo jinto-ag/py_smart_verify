@@ -89,7 +89,10 @@ class DeprecationChecker(ast.NodeVisitor):
         self._check_deprecated_decorator(node)
         self.generic_visit(node)
 
-    visit_AsyncFunctionDef = visit_FunctionDef
+    def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
+        """Check for @deprecated decorator on async functions."""
+        self._check_deprecated_decorator(node)
+        self.generic_visit(node)
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
         """Check for @deprecated decorator on classes."""

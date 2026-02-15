@@ -181,7 +181,6 @@ class E2ETestTask(BaseTask):
                 "-q",
                 "--maxfail=1",
                 "--disable-warnings",
-                "--no-exclude-e2e",  # Include E2E tests
                 "tests/e2e",
             ]
 
@@ -251,7 +250,6 @@ class FullE2ETestTask(BaseTask):
                 "-q",
                 "--maxfail=1",
                 "--disable-warnings",
-                "--no-exclude-e2e",
                 "tests/e2e",
             ]
 
