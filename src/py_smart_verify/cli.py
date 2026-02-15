@@ -1,4 +1,4 @@
-"""Typer CLI for py-verify."""
+"""Typer CLI for py-smart-verify."""
 
 import subprocess
 import sys
@@ -7,18 +7,18 @@ from typing import TYPE_CHECKING
 
 import typer
 
-from py_verify import __app_name__, __version__
-from py_verify.config import RunMode, Severity, VerifyConfig
-from py_verify.console import console
-from py_verify.runner import VerifyRunner
+from py_smart_verify import __app_name__, __version__
+from py_smart_verify.config import RunMode, Severity, VerifyConfig
+from py_smart_verify.console import console
+from py_smart_verify.runner import VerifyRunner
 
 if TYPE_CHECKING:
     pass
 
 # Import for graph command
-from py_verify.console import print_dependency_graph
-from py_verify.discovery import PathDiscovery
-from py_verify.graph import DependencyGraphBuilder
+from py_smart_verify.console import print_dependency_graph
+from py_smart_verify.discovery import PathDiscovery
+from py_smart_verify.graph import DependencyGraphBuilder
 
 app = typer.Typer(
     help="Professional Python verification tool",
@@ -238,13 +238,13 @@ def regen_graph() -> None:
 def mcp() -> None:
     """Start the MCP (Model Context Protocol) server for AI agent integration."""
     try:
-        from py_verify.mcp_server import main as mcp_main
+        from py_smart_verify.mcp_server import main as mcp_main
 
         mcp_main()
     except ImportError as err:
         console.print(
             "[red]MCP dependencies not installed. "
-            "Install with: pip install 'py-verify\\[mcp]'[/red]"
+            "Install with: pip install 'py-smart-verify\\[mcp]'[/red]"
         )
         raise typer.Exit(1) from err
 

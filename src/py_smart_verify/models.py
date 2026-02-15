@@ -1,4 +1,4 @@
-"""Data models for py-verify."""
+"""Data models for py-smart-verify."""
 
 import json
 from datetime import datetime

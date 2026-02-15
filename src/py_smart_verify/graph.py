@@ -1,11 +1,11 @@
-"""Dependency graph building for py-verify."""
+"""Dependency graph building for py-smart-verify."""
 
 import ast
 import json
 from pathlib import Path
 from typing import Any
 
-from py_verify.models import DependencyGraph, DependencyNode
+from py_smart_verify.models import DependencyGraph, DependencyNode
 
 
 class DependencyGraphBuilder:

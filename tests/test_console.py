@@ -1,11 +1,11 @@
-"""Tests for py_verify.console."""
+"""Tests for py_smart_verify.console."""
 
 from io import StringIO
 
 from rich.console import Console
 
-import py_verify.console
-from py_verify.console import (
+import py_smart_verify.console
+from py_smart_verify.console import (
     get_theme,
     print_banner,
     print_cache_hit,
@@ -15,7 +15,7 @@ from py_verify.console import (
     print_step_result,
     print_step_start,
 )
-from py_verify.models import (
+from py_smart_verify.models import (
     DependencyGraph,
     DependencyNode,
     Issue,
@@ -29,7 +29,7 @@ def _capture(monkeypatch) -> StringIO:
     """Helper to capture console output."""
     buf = StringIO()
     test_console = Console(file=buf, theme=get_theme(), width=120)
-    monkeypatch.setattr(py_verify.console, "console", test_console)
+    monkeypatch.setattr(py_smart_verify.console, "console", test_console)
     return buf
 
 
@@ -38,7 +38,7 @@ class TestPrintBanner:
         buf = _capture(monkeypatch)
         print_banner()
         output = buf.getvalue()
-        assert "py-verify" in output
+        assert "py-smart-verify" in output
 
 
 class TestPrintStepStart:

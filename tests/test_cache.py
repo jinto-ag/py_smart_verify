@@ -1,8 +1,8 @@
-"""Tests for py_verify.cache."""
+"""Tests for py_smart_verify.cache."""
 
 from pathlib import Path
 
-from py_verify.cache import CacheManager
+from py_smart_verify.cache import CacheManager
 
 
 class TestCacheManager:

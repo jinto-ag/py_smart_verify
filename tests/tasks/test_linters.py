@@ -1,13 +1,13 @@
-"""Tests for py_verify.tasks.linters."""
+"""Tests for py_smart_verify.tasks.linters."""
 
 import shutil
 import subprocess
 
 import pytest
 
-from py_verify.models import StepStatus
-from py_verify.tasks.base import TaskCategory
-from py_verify.tasks.linters import Flake8Task, PyflakesTask
+from py_smart_verify.models import StepStatus
+from py_smart_verify.tasks.base import TaskCategory
+from py_smart_verify.tasks.linters import Flake8Task, PyflakesTask
 
 
 class TestFlake8Task:

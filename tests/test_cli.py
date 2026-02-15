@@ -1,14 +1,14 @@
-"""Tests for py_verify.cli."""
+"""Tests for py_smart_verify.cli."""
 
 import subprocess
 from pathlib import Path
 
 from typer.testing import CliRunner
 
-import py_verify.cli
-from py_verify.cli import _build_verify_config, app
-from py_verify.config import RunMode, Severity
-from py_verify.models import RunResult, StepStatus
+import py_smart_verify.cli
+from py_smart_verify.cli import _build_verify_config, app
+from py_smart_verify.config import RunMode, Severity
+from py_smart_verify.models import RunResult, StepStatus
 
 runner = CliRunner()
 
@@ -38,17 +38,17 @@ class TestVerifyCommand:
     def test_version(self):
         result = runner.invoke(app, ["verify", "--version"])
         assert result.exit_code == 0
-        assert "py-verify" in result.output
+        assert "py-smart-verify" in result.output
 
     def test_default_run(self, monkeypatch, tmp_path: Path):
         """Verify command runs without crashing."""
-        monkeypatch.setattr(py_verify.cli, "VerifyRunner", _make_mock_runner(0))
+        monkeypatch.setattr(py_smart_verify.cli, "VerifyRunner", _make_mock_runner(0))
         monkeypatch.setattr(Path, "cwd", lambda: tmp_path)
         result = runner.invoke(app, ["verify", "quality"])
         assert result.exit_code == 0
 
     def test_with_options(self, monkeypatch, tmp_path: Path):
-        monkeypatch.setattr(py_verify.cli, "VerifyRunner", _make_mock_runner(0))
+        monkeypatch.setattr(py_smart_verify.cli, "VerifyRunner", _make_mock_runner(0))
         monkeypatch.setattr(Path, "cwd", lambda: tmp_path)
         result = runner.invoke(
             app,
@@ -65,7 +65,7 @@ class TestVerifyCommand:
         assert result.exit_code == 0
 
     def test_exit_code_propagation(self, monkeypatch, tmp_path: Path):
-        monkeypatch.setattr(py_verify.cli, "VerifyRunner", _make_mock_runner(1))
+        monkeypatch.setattr(py_smart_verify.cli, "VerifyRunner", _make_mock_runner(1))
         monkeypatch.setattr(Path, "cwd", lambda: tmp_path)
         result = runner.invoke(app, ["verify", "quality"])
         assert result.exit_code == 1

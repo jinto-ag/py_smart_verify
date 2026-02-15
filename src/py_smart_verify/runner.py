@@ -1,23 +1,23 @@
-"""VerifyRunner orchestrator for py-verify."""
+"""VerifyRunner orchestrator for py-smart-verify."""
 
 import uuid
 from datetime import datetime
 from pathlib import Path
 
-from py_verify.cache import CacheManager
-from py_verify.config import VerifyConfig
-from py_verify.console import (
+from py_smart_verify.cache import CacheManager
+from py_smart_verify.config import VerifyConfig
+from py_smart_verify.console import (
     console,
     print_banner,
     print_run_summary,
     print_step_result,
     print_step_start,
 )
-from py_verify.discovery import PathDiscovery
-from py_verify.models import RunResult, StepStatus
-from py_verify.tasks import task_registry
-from py_verify.tasks.quality import QualityCompositeTask
-from py_verify.venv import VenvManager
+from py_smart_verify.discovery import PathDiscovery
+from py_smart_verify.models import RunResult, StepStatus
+from py_smart_verify.tasks import task_registry
+from py_smart_verify.tasks.quality import QualityCompositeTask
+from py_smart_verify.venv import VenvManager
 
 
 class VerifyRunner:
@@ -80,8 +80,8 @@ class VerifyRunner:
 
     def _setup(self) -> None:
         """Setup verification environment."""
-        # Create .py_verify directory structure
-        (self.config.project_root / ".py_verify").mkdir(exist_ok=True)
+        # Create .py_smart_verify directory structure
+        (self.config.project_root / ".py_smart_verify").mkdir(exist_ok=True)
         self.config.log_dir.mkdir(parents=True, exist_ok=True)
         self.config.cache_dir.mkdir(parents=True, exist_ok=True)
 
@@ -92,8 +92,8 @@ class VerifyRunner:
         self._ensure_configs()
 
     def _ensure_gitignore(self) -> None:
-        """Create .py_verify/.gitignore"""
-        gitignore_path = self.config.project_root / ".py_verify" / ".gitignore"
+        """Create .py_smart_verify/.gitignore"""
+        gitignore_path = self.config.project_root / ".py_smart_verify" / ".gitignore"
         gitignore_path.parent.mkdir(parents=True, exist_ok=True)
         gitignore_path.write_text("*\n!.gitignore\n")
 
@@ -163,7 +163,7 @@ class VerifyRunner:
         self.result.add_step(result)
 
         # Update run result JSON after each step
-        json_path = self.config.project_root / ".py_verify" / "last_run.json"
+        json_path = self.config.project_root / ".py_smart_verify" / "last_run.json"
         self.result.to_json_file(json_path)
 
         # Handle fast-fail mode
@@ -190,7 +190,7 @@ class VerifyRunner:
             self.result.mark_success()
 
         # Write final JSON
-        json_path = self.config.project_root / ".py_verify" / "last_run.json"
+        json_path = self.config.project_root / ".py_smart_verify" / "last_run.json"
         self.result.to_json_file(json_path)
 
         # Print summary

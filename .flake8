@@ -1,6 +1,6 @@
 [flake8]
 max-line-length = 100
-exclude = .git,__pycache__,docs,build,dist,.venv,.py_verify
+exclude = .git,__pycache__,docs,build,dist,.venv,.py_smart_verify
 per-file-ignores =
     tests/*:F841,E402
     tests/**/*:F841,E402

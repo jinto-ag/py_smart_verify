@@ -1,11 +1,11 @@
-"""Tests for py_verify.tasks.base."""
+"""Tests for py_smart_verify.tasks.base."""
 
 import shutil
 import subprocess
 from pathlib import Path
 
-from py_verify.models import Issue, StepResult, StepStatus
-from py_verify.tasks.base import BaseTask, TaskCategory, TaskMetadata
+from py_smart_verify.models import Issue, StepResult, StepStatus
+from py_smart_verify.tasks.base import BaseTask, TaskCategory, TaskMetadata
 
 
 class ConcreteTask(BaseTask):

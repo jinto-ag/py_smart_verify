@@ -1,4 +1,4 @@
-"""Tests for py_verify.mcp_server.
+"""Tests for py_smart_verify.mcp_server.
 
 These tests are skipped if the 'mcp' package is not installed.
 """
@@ -11,7 +11,7 @@ import pytest
 
 mcp_mod = pytest.importorskip("mcp")
 
-from py_verify.mcp_server import (  # isort: skip
+from py_smart_verify.mcp_server import (  # isort: skip
     affected,
     config_resource,
     graph,
@@ -212,9 +212,9 @@ class TestListTasksTool:
 
 class TestLastRunResource:
     def test_reads_existing_file(self, monkeypatch, tmp_path: Path):
-        """Reads .py_verify/last_run.json when it exists."""
+        """Reads .py_smart_verify/last_run.json when it exists."""
         monkeypatch.setattr(Path, "cwd", lambda: tmp_path)
-        py_verify_dir = tmp_path / ".py_verify"
+        py_verify_dir = tmp_path / ".py_smart_verify"
         py_verify_dir.mkdir()
         last_run = py_verify_dir / "last_run.json"
         expected = {"run_id": "test-123", "status": "success"}
@@ -273,4 +273,4 @@ class TestMain:
     def test_mcp_instance_exists(self):
         """MCP FastMCP instance is created."""
         assert mcp is not None
-        assert mcp.name == "py-verify"
+        assert mcp.name == "py-smart-verify"

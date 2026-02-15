@@ -56,7 +56,7 @@ jobs:
     if: ${{ github.event.inputs.publish_only == 'true' }}
     environment:
       name: pypi
-      url: https://pypi.org/p/py-verify
+      url: https://pypi.org/p/py-smart-verify
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -103,7 +103,7 @@ jobs:
           echo "# 🚀 Published to PyPI" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Version**: v$VERSION" >> $GITHUB_STEP_SUMMARY
-          echo "- **Package**: [py-verify](https://pypi.org/project/py-verify/$VERSION/)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Package**: [py-smart-verify](https://pypi.org/project/py-smart-verify/$VERSION/)" >> $GITHUB_STEP_SUMMARY
 
   release:
     name: Release and Publish

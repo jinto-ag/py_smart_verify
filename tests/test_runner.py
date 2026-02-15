@@ -1,14 +1,14 @@
-"""Tests for py_verify.runner."""
+"""Tests for py_smart_verify.runner."""
 
 from pathlib import Path
 
-import py_verify.console
-import py_verify.runner
-from py_verify.config import RunMode, VerifyConfig
-from py_verify.models import StepResult, StepStatus
-from py_verify.runner import VerifyRunner
-from py_verify.tasks.base import BaseTask, TaskCategory, TaskMetadata
-from py_verify.tasks.registry import TaskRegistry
+import py_smart_verify.console
+import py_smart_verify.runner
+from py_smart_verify.config import RunMode, VerifyConfig
+from py_smart_verify.models import StepResult, StepStatus
+from py_smart_verify.runner import VerifyRunner
+from py_smart_verify.tasks.base import BaseTask, TaskCategory, TaskMetadata
+from py_smart_verify.tasks.registry import TaskRegistry
 
 
 class FakeTask(BaseTask):
@@ -33,8 +33,8 @@ class FakeTask(BaseTask):
 def _make_config(tmp_path: Path, **overrides) -> VerifyConfig:
     defaults = {
         "project_root": tmp_path,
-        "cache_dir": tmp_path / ".py_verify" / "cache",
-        "log_dir": tmp_path / ".py_verify" / "logs",
+        "cache_dir": tmp_path / ".py_smart_verify" / "cache",
+        "log_dir": tmp_path / ".py_smart_verify" / "logs",
         "tasks": ["fake"],
     }
     defaults.update(overrides)
@@ -47,13 +47,13 @@ def _silence_console(monkeypatch):
 
     from rich.console import Console
 
-    from py_verify.console import get_theme
+    from py_smart_verify.console import get_theme
 
     buf = StringIO()
     test_console = Console(file=buf, theme=get_theme(), width=120)
-    monkeypatch.setattr(py_verify.console, "console", test_console)
+    monkeypatch.setattr(py_smart_verify.console, "console", test_console)
     # Also patch runner's local import of console
-    monkeypatch.setattr(py_verify.runner, "console", test_console)
+    monkeypatch.setattr(py_smart_verify.runner, "console", test_console)
     return buf
 
 
@@ -71,7 +71,7 @@ class TestSetup:
         config = _make_config(tmp_path)
         runner = VerifyRunner(config)
         runner._setup()
-        assert (tmp_path / ".py_verify").exists()
+        assert (tmp_path / ".py_smart_verify").exists()
         assert config.log_dir.exists()
         assert config.cache_dir.exists()
 
@@ -81,7 +81,7 @@ class TestEnsureGitignore:
         config = _make_config(tmp_path)
         runner = VerifyRunner(config)
         runner._ensure_gitignore()
-        gitignore = tmp_path / ".py_verify" / ".gitignore"
+        gitignore = tmp_path / ".py_smart_verify" / ".gitignore"
         assert gitignore.exists()
         content = gitignore.read_text()
         assert "*" in content
@@ -144,7 +144,7 @@ class TestExecuteTask:
 
         reg = TaskRegistry()
         reg.register(FakeTask)
-        monkeypatch.setattr(py_verify.runner, "task_registry", reg)
+        monkeypatch.setattr(py_smart_verify.runner, "task_registry", reg)
 
         config = _make_config(tmp_path)
         runner = VerifyRunner(config)
@@ -161,7 +161,7 @@ class TestExecuteTask:
 
         reg = TaskRegistry()
         reg.register(FakeTask)
-        monkeypatch.setattr(py_verify.runner, "task_registry", reg)
+        monkeypatch.setattr(py_smart_verify.runner, "task_registry", reg)
 
         config = _make_config(tmp_path, no_cache=True)
         runner = VerifyRunner(config)
@@ -179,7 +179,7 @@ class TestExecuteTask:
 
         reg = TaskRegistry()
         reg.register(FakeTask)
-        monkeypatch.setattr(py_verify.runner, "task_registry", reg)
+        monkeypatch.setattr(py_smart_verify.runner, "task_registry", reg)
 
         config = _make_config(tmp_path)
         runner = VerifyRunner(config)
@@ -228,7 +228,7 @@ class TestTeardown:
         runner = VerifyRunner(config)
         runner._setup()
         runner._teardown()
-        json_path = tmp_path / ".py_verify" / "last_run.json"
+        json_path = tmp_path / ".py_smart_verify" / "last_run.json"
         assert json_path.exists()
 
 
@@ -258,7 +258,7 @@ class TestExecuteTaskFastFail:
 
         reg = TaskRegistry()
         reg.register(FailTask)
-        monkeypatch.setattr(py_verify.runner, "task_registry", reg)
+        monkeypatch.setattr(py_smart_verify.runner, "task_registry", reg)
 
         config = _make_config(tmp_path, no_cache=True, run_mode=RunMode.FAST_FAIL)
         runner = VerifyRunner(config)
@@ -277,7 +277,7 @@ class TestExecuteTaskFastFail:
 
         reg = TaskRegistry()
         reg.register(FakeTask)
-        monkeypatch.setattr(py_verify.runner, "task_registry", reg)
+        monkeypatch.setattr(py_smart_verify.runner, "task_registry", reg)
 
         config = _make_config(tmp_path)  # cache enabled by default
         runner = VerifyRunner(config)
@@ -291,12 +291,12 @@ class TestResolveTasksEdgeCases:
     def test_quality_expansion_exception(self, tmp_path: Path, monkeypatch):
         _silence_console(monkeypatch)
         # Force QualityCompositeTask to raise during initialization
-        import py_verify.runner
+        import py_smart_verify.runner
 
         def broken_quality(config):
             raise RuntimeError("boom")
 
-        monkeypatch.setattr(py_verify.runner, "QualityCompositeTask", broken_quality)
+        monkeypatch.setattr(py_smart_verify.runner, "QualityCompositeTask", broken_quality)
         config = _make_config(tmp_path, tasks=["quality"])
         runner = VerifyRunner(config)
         tasks = runner._resolve_tasks()
@@ -314,7 +314,7 @@ class TestRun:
 
         reg = TaskRegistry()
         reg.register(FakeTask)
-        monkeypatch.setattr(py_verify.runner, "task_registry", reg)
+        monkeypatch.setattr(py_smart_verify.runner, "task_registry", reg)
 
         config = _make_config(tmp_path, tasks=["fake"], no_cache=True)
         # Create a Python file so py_files is not empty
@@ -343,7 +343,7 @@ class TestRun:
 
         reg = TaskRegistry()
         reg.register(FakeTask)
-        monkeypatch.setattr(py_verify.runner, "task_registry", reg)
+        monkeypatch.setattr(py_smart_verify.runner, "task_registry", reg)
 
         config = _make_config(tmp_path, tasks=["fake"], no_cache=True)
         # Don't create any Python files

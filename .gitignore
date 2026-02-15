@@ -9,8 +9,8 @@ wheels/
 # Virtual environments
 .venv
 
-# py-verify generated artifacts
-.py_verify/
+# py-smart-verify generated artifacts
+.py_smart_verify/
 
 # py-smart-test generated artifacts (dependency)
 .py_smart_test/

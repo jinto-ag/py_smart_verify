@@ -1,12 +1,12 @@
-"""Shared fixtures for py-verify tests."""
+"""Shared fixtures for py-smart-verify tests."""
 
 from pathlib import Path
 from typing import Any
 
 import pytest
 
-from py_verify.config import VerifyConfig
-from py_verify.models import Issue, StepResult, StepStatus
+from py_smart_verify.config import VerifyConfig
+from py_smart_verify.models import Issue, StepResult, StepStatus
 
 
 @pytest.fixture()
@@ -26,10 +26,10 @@ def project_root(tmp_path: Path) -> Path:
     # Create pyproject.toml
     (tmp_path / "pyproject.toml").write_text("[project]\nname = 'test'\n")
 
-    # Create .py_verify dirs
-    cache_dir = tmp_path / ".py_verify" / "cache"
+    # Create .py_smart_verify dirs
+    cache_dir = tmp_path / ".py_smart_verify" / "cache"
     cache_dir.mkdir(parents=True)
-    log_dir = tmp_path / ".py_verify" / "logs"
+    log_dir = tmp_path / ".py_smart_verify" / "logs"
     log_dir.mkdir(parents=True)
 
     return tmp_path
@@ -42,8 +42,8 @@ def make_config(project_root: Path):
     def _make(**overrides: Any) -> VerifyConfig:
         defaults: dict[str, Any] = {
             "project_root": project_root,
-            "cache_dir": project_root / ".py_verify" / "cache",
-            "log_dir": project_root / ".py_verify" / "logs",
+            "cache_dir": project_root / ".py_smart_verify" / "cache",
+            "log_dir": project_root / ".py_smart_verify" / "logs",
         }
         defaults.update(overrides)
         return VerifyConfig(**defaults)

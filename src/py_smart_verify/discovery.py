@@ -1,4 +1,4 @@
-"""Path discovery for py-verify."""
+"""Path discovery for py-smart-verify."""
 
 from pathlib import Path
 from typing import ClassVar

@@ -1,6 +1,6 @@
-"""Tests for py_verify.tasks.__init__."""
+"""Tests for py_smart_verify.tasks.__init__."""
 
-from py_verify.tasks import TaskRegistry, register, task_registry
+from py_smart_verify.tasks import TaskRegistry, register, task_registry
 
 
 def test_task_registry_is_instance():

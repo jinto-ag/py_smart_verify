@@ -1,8 +1,8 @@
-"""Task registry for py-verify."""
+"""Task registry for py-smart-verify."""
 
 # Import all task modules at module level to trigger @register decorators.
-# No circular dependency: task modules import from py_verify.tasks.registry.
-from py_verify.tasks import (
+# No circular dependency: task modules import from py_smart_verify.tasks.registry.
+from py_smart_verify.tasks import (
     analyzers,
     formatters,
     linters,
@@ -11,7 +11,7 @@ from py_verify.tasks import (
     testing,
     type_checkers,
 )
-from py_verify.tasks.registry import TaskRegistry, register, task_registry
+from py_smart_verify.tasks.registry import TaskRegistry, register, task_registry
 
 __all__ = [
     "TaskRegistry",

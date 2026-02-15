@@ -1,9 +1,9 @@
-"""Task registry for py-verify."""
+"""Task registry for py-smart-verify."""
 
 from typing import TypeVar
 
-from py_verify.config import VerifyConfig
-from py_verify.tasks.base import BaseTask, TaskCategory
+from py_smart_verify.config import VerifyConfig
+from py_smart_verify.tasks.base import BaseTask, TaskCategory
 
 _T = TypeVar("_T", bound=BaseTask)
 

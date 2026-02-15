@@ -1,7 +1,7 @@
 {
   "mcpServers": {
-    "py-verify": {
-      "command": "py-verify-mcp"
+    "py-smart-verify": {
+      "command": "py-smart-verify-mcp"
     }
   }
 }

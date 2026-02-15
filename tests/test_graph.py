@@ -1,10 +1,10 @@
-"""Tests for py_verify.graph."""
+"""Tests for py_smart_verify.graph."""
 
 import json
 from pathlib import Path
 
-from py_verify.graph import DependencyGraphBuilder
-from py_verify.models import DependencyGraph, DependencyNode
+from py_smart_verify.graph import DependencyGraphBuilder
+from py_smart_verify.models import DependencyGraph, DependencyNode
 
 
 class TestBuild:

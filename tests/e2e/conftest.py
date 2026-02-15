@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from py_verify.config import VerifyConfig
+from py_smart_verify.config import VerifyConfig
 
 
 @pytest.fixture()
@@ -57,9 +57,9 @@ def e2e_project(tmp_path: Path) -> Path:
         "line-length = 100\n"
     )
 
-    # .py_verify directories
-    (tmp_path / ".py_verify" / "cache").mkdir(parents=True)
-    (tmp_path / ".py_verify" / "logs").mkdir(parents=True)
+    # .py_smart_verify directories
+    (tmp_path / ".py_smart_verify" / "cache").mkdir(parents=True)
+    (tmp_path / ".py_smart_verify" / "logs").mkdir(parents=True)
 
     return tmp_path
 
@@ -89,8 +89,8 @@ def e2e_config(e2e_project: Path):
     def _make(**overrides):
         defaults = {
             "project_root": e2e_project,
-            "cache_dir": e2e_project / ".py_verify" / "cache",
-            "log_dir": e2e_project / ".py_verify" / "logs",
+            "cache_dir": e2e_project / ".py_smart_verify" / "cache",
+            "log_dir": e2e_project / ".py_smart_verify" / "logs",
             "no_cache": True,
             "json_mode": True,
         }

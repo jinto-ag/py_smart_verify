@@ -1,8 +1,8 @@
-# Contributing to py-verify
+# Contributing to py-smart-verify
 
 First off, thanks for taking the time to contribute!
 
-The following is a set of guidelines for contributing to `py-verify` (alias: `pyv`). These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
+The following is a set of guidelines for contributing to `py-smart-verify` (alias: `pyv`). These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
 
 ## Code of Conduct
 
@@ -20,8 +20,8 @@ This project and everyone participating in it is governed by the [Code of Conduc
 1.  **Fork the repository** on GitHub.
 2.  **Clone your fork** locally:
     ```bash
-    git clone https://github.com/your-username/py-verify.git
-    cd py-verify
+    git clone https://github.com/your-username/py-smart-verify.git
+    cd py-smart-verify
     ```
 3.  **Install dependencies** using `uv`:
     ```bash
@@ -62,7 +62,7 @@ This project and everyone participating in it is governed by the [Code of Conduc
 You can run the tool directly from source:
 
 ```bash
-uv run py-verify --help
+uv run py-smart-verify --help
 # or use the short alias
 uv run pyv --help
 ```

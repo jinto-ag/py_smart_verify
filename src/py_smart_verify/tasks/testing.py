@@ -1,10 +1,10 @@
-"""Testing tasks for py-verify with py-smart-test integration."""
+"""Testing tasks for py-smart-verify with py-smart-test integration."""
 
 from pathlib import Path
 
-from py_verify.models import Issue, StepResult, StepStatus
-from py_verify.tasks.base import BaseTask, TaskCategory, TaskMetadata
-from py_verify.tasks.registry import register
+from py_smart_verify.models import Issue, StepResult, StepStatus
+from py_smart_verify.tasks.base import BaseTask, TaskCategory, TaskMetadata
+from py_smart_verify.tasks.registry import register
 
 
 @register

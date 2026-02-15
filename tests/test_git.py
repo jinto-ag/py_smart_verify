@@ -1,9 +1,9 @@
-"""Tests for py_verify.git."""
+"""Tests for py_smart_verify.git."""
 
 import subprocess
 from pathlib import Path
 
-from py_verify.git import GitIntegration
+from py_smart_verify.git import GitIntegration
 
 
 class TestIsGitRepo:

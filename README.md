@@ -1,4 +1,4 @@
-# py-verify
+# py-smart-verify
 
 Professional Python verification CLI tool combining linting, type checking, and smart testing into a single command.
 
@@ -13,13 +13,13 @@ Professional Python verification CLI tool combining linting, type checking, and 
 ## Installation
 
 ```bash
-pip install py-verify
+pip install py-smart-verify
 ```
 
 Or with [uv](https://github.com/astral-sh/uv):
 
 ```bash
-uv add py-verify
+uv add py-smart-verify
 ```
 
 ### Optional tools
@@ -27,20 +27,20 @@ uv add py-verify
 Install all supported verification tools:
 
 ```bash
-pip install py-verify[all-tools]
+pip install py-smart-verify[all-tools]
 ```
 
 ## Quick start
 
 ```bash
 # Run all quality checks (format, lint, type check, analyze)
-py-verify verify quality
+py-smart-verify verify quality
 
 # Run tests (smart mode - only affected tests)
-py-verify verify tests
+py-smart-verify verify tests
 
 # Run everything
-py-verify verify
+py-smart-verify verify
 
 # Use the short alias
 pyv verify quality
@@ -54,12 +54,12 @@ Run verification checks on Python code.
 
 ```bash
 # Run specific tasks
-py-verify verify ruff mypy
+py-smart-verify verify ruff mypy
 
 # Run with options
-py-verify verify --no-cache --continue quality
-py-verify verify --paths src,lib --full-tests
-py-verify verify --staged tests  # pre-commit mode
+py-smart-verify verify --no-cache --continue quality
+py-smart-verify verify --paths src,lib --full-tests
+py-smart-verify verify --staged tests  # pre-commit mode
 ```
 
 **Options:**
@@ -80,8 +80,8 @@ py-verify verify --staged tests  # pre-commit mode
 Build and display the dependency graph.
 
 ```bash
-py-verify graph
-py-verify graph --output deps.json
+py-smart-verify graph
+py-smart-verify graph --output deps.json
 ```
 
 ### `affected`
@@ -89,8 +89,8 @@ py-verify graph --output deps.json
 List tests affected by code changes.
 
 ```bash
-py-verify affected
-py-verify affected --since main --json
+py-smart-verify affected
+py-smart-verify affected --since main --json
 ```
 
 ### `regen-graph`
@@ -98,7 +98,7 @@ py-verify affected --since main --json
 Regenerate the py-smart-test dependency graph.
 
 ```bash
-py-verify regen-graph
+py-smart-verify regen-graph
 ```
 
 ## Available tasks
@@ -115,7 +115,7 @@ py-verify regen-graph
 ## Requirements
 
 - Python 3.11+
-- Individual tools (ruff, mypy, etc.) installed separately or via `py-verify[all-tools]`
+- Individual tools (ruff, mypy, etc.) installed separately or via `py-smart-verify[all-tools]`
 
 ## License
 
