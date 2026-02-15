@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from py_verify.models import StepResult
 from py_verify.tasks.base import BaseTask, TaskCategory, TaskMetadata
 from py_verify.tasks.registry import TaskRegistry
 
@@ -21,8 +22,8 @@ class DummyTask(BaseTask):
             phase=0,
         )
 
-    def execute(self, paths: list[Path]):
-        pass
+    def execute(self, paths: list[Path]) -> StepResult:
+        return self._build_skipped()
 
 
 class AnotherDummyTask(BaseTask):
@@ -40,8 +41,8 @@ class AnotherDummyTask(BaseTask):
             phase=1,
         )
 
-    def execute(self, paths: list[Path]):
-        pass
+    def execute(self, paths: list[Path]) -> StepResult:
+        return self._build_skipped()
 
 
 class TestTaskRegistry:
@@ -113,11 +114,11 @@ class TestTaskRegistry:
         """Task that raises during instantiation should be silently skipped."""
 
         class BrokenTask(BaseTask):
-            def _get_metadata(self):
+            def _get_metadata(self) -> TaskMetadata:
                 raise RuntimeError("broken")
 
-            def execute(self, paths):
-                pass
+            def execute(self, paths: list[Path]) -> StepResult:
+                return self._build_skipped()
 
         reg = TaskRegistry()
         reg.register(BrokenTask)
@@ -134,7 +135,7 @@ class TestTaskRegistry:
         class FlakeyTask(BaseTask):
             _call_count = 0
 
-            def _get_metadata(self):
+            def _get_metadata(self) -> TaskMetadata:
                 FlakeyTask._call_count += 1
                 if FlakeyTask._call_count > 1:
                     raise RuntimeError("flaky")
@@ -148,8 +149,8 @@ class TestTaskRegistry:
                     cache_scope="meta",
                 )
 
-            def execute(self, paths):
-                pass
+            def execute(self, paths: list[Path]) -> StepResult:
+                return self._build_skipped()
 
         reg = TaskRegistry()
         # First call succeeds (during register)

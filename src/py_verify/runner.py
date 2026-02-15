@@ -110,9 +110,8 @@ class VerifyRunner:
         for name in task_names:
             if name == "quality":
                 # Expand quality composite
-                dummy_config = type("DummyConfig", (), {})()
                 try:
-                    quality_task = QualityCompositeTask(dummy_config)
+                    quality_task = QualityCompositeTask(VerifyConfig())
                     resolved.extend(quality_task.get_subtasks())
                 except Exception:
                     resolved.append(name)

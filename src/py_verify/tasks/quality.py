@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from py_verify.config import VerifyConfig
 from py_verify.models import StepResult, StepStatus
 from py_verify.tasks.base import BaseTask, TaskCategory, TaskMetadata
 from py_verify.tasks.registry import register, task_registry
@@ -42,36 +43,32 @@ class QualityCompositeTask(BaseTask):
 
         # Get all formatters
         for task_class in task_registry.get_by_category(TaskCategory.FORMATTER):
-            dummy_config = type("DummyConfig", (), {})()
             try:
-                instance = task_class(dummy_config)
+                instance = task_class(VerifyConfig())
                 subtasks.append((instance.metadata.phase, instance.metadata.name))
             except Exception:
                 pass
 
         # Get all linters
         for task_class in task_registry.get_by_category(TaskCategory.LINTER):
-            dummy_config = type("DummyConfig", (), {})()
             try:
-                instance = task_class(dummy_config)
+                instance = task_class(VerifyConfig())
                 subtasks.append((instance.metadata.phase, instance.metadata.name))
             except Exception:
                 pass
 
         # Get all type checkers
         for task_class in task_registry.get_by_category(TaskCategory.TYPE_CHECKER):
-            dummy_config = type("DummyConfig", (), {})()
             try:
-                instance = task_class(dummy_config)
+                instance = task_class(VerifyConfig())
                 subtasks.append((instance.metadata.phase, instance.metadata.name))
             except Exception:
                 pass
 
         # Get all analyzers
         for task_class in task_registry.get_by_category(TaskCategory.ANALYZER):
-            dummy_config = type("DummyConfig", (), {})()
             try:
-                instance = task_class(dummy_config)
+                instance = task_class(VerifyConfig())
                 subtasks.append((instance.metadata.phase, instance.metadata.name))
             except Exception:
                 pass

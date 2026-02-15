@@ -50,6 +50,15 @@ repos:
         args: [--ignore-missing-imports]
         files: ^src/
 
+  - repo: local
+    hooks:
+      - id: basedpyright
+        name: basedpyright
+        entry: uv run basedpyright
+        language: system
+        types: [python]
+        pass_filenames: false
+
   # Testing
   - repo: local
     hooks:

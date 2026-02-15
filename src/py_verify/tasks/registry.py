@@ -2,6 +2,7 @@
 
 from typing import TypeVar
 
+from py_verify.config import VerifyConfig
 from py_verify.tasks.base import BaseTask, TaskCategory
 
 _T = TypeVar("_T", bound=BaseTask)
@@ -18,9 +19,8 @@ class TaskRegistry:
     def register(self, task_class: type[BaseTask]) -> None:
         """Register a task class."""
         # Create a dummy instance to get metadata
-        dummy_config = type("DummyConfig", (), {})()
         try:
-            instance = task_class(dummy_config)
+            instance = task_class(VerifyConfig())
             name = instance.metadata.name
             self._tasks[name] = task_class
 
@@ -42,9 +42,8 @@ class TaskRegistry:
         """Get all tasks of a category."""
         result = []
         for task_class in self._tasks.values():
-            dummy_config = type("DummyConfig", (), {})()
             try:
-                instance = task_class(dummy_config)
+                instance = task_class(VerifyConfig())
                 if instance.metadata.category == category:
                     result.append(task_class)
             except Exception:

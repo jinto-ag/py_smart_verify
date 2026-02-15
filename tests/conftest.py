@@ -1,6 +1,7 @@
 """Shared fixtures for py-verify tests."""
 
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -38,8 +39,8 @@ def project_root(tmp_path: Path) -> Path:
 def make_config(project_root: Path):
     """Factory for VerifyConfig with tmp_path directories."""
 
-    def _make(**overrides):
-        defaults = {
+    def _make(**overrides: Any) -> VerifyConfig:
+        defaults: dict[str, Any] = {
             "project_root": project_root,
             "cache_dir": project_root / ".py_verify" / "cache",
             "log_dir": project_root / ".py_verify" / "logs",
@@ -92,8 +93,8 @@ def sample_py_file_with_issues(tmp_path: Path) -> Path:
 def make_step_result():
     """Factory for StepResult."""
 
-    def _make(**overrides):
-        defaults = {
+    def _make(**overrides: Any) -> StepResult:
+        defaults: dict[str, Any] = {
             "name": "test-step",
             "status": StepStatus.SUCCESS,
             "exit_code": 0,
@@ -108,8 +109,8 @@ def make_step_result():
 def make_issue():
     """Factory for Issue."""
 
-    def _make(**overrides):
-        defaults = {
+    def _make(**overrides: Any) -> Issue:
+        defaults: dict[str, Any] = {
             "file": "test.py",
             "type": "error",
             "message": "test issue",
