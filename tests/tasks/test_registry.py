@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from py_verify.tasks.base import BaseTask, TaskCategory, TaskMetadata
-from py_verify.tasks.registry import TaskRegistry, register
+from py_verify.tasks.registry import TaskRegistry
 
 
 class DummyTask(BaseTask):

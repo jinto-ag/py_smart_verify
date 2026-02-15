@@ -4,6 +4,10 @@ import json
 from io import StringIO
 from pathlib import Path
 
+from rich.console import Console
+from typer.testing import CliRunner
+
+import py_verify.cli
 import py_verify.console
 import py_verify.runner
 from py_verify.cli import _build_verify_config, app
@@ -12,10 +16,6 @@ from py_verify.models import RunResult, StepResult, StepStatus
 from py_verify.runner import VerifyRunner
 from py_verify.tasks.base import BaseTask, TaskCategory, TaskMetadata
 from py_verify.tasks.registry import TaskRegistry
-from rich.console import Console
-from typer.testing import CliRunner
-
-import py_verify.cli
 
 cli_runner = CliRunner()
 
@@ -34,9 +34,7 @@ def _make_mock_runner(exit_code: int = 0):
                 steps=[
                     StepResult(
                         name="fake-task",
-                        status=(
-                            StepStatus.SUCCESS if exit_code == 0 else StepStatus.FAILED
-                        ),
+                        status=(StepStatus.SUCCESS if exit_code == 0 else StepStatus.FAILED),
                         start_epoch=1000.0,
                         end_epoch=1001.5,
                         exit_code=exit_code,
@@ -249,9 +247,7 @@ class TestVerifyJsonCLI:
         try:
             json.loads(result.output)
             # If output happens to be empty or just whitespace, that's fine
-            assert result.output.strip() == "" or not result.output.strip().startswith(
-                "{"
-            )
+            assert result.output.strip() == "" or not result.output.strip().startswith("{")
         except json.JSONDecodeError:
             pass  # Expected - output is not JSON
 

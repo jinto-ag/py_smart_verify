@@ -12,9 +12,8 @@ def test_main_imports_app():
 
 def test_main_guard():
     """Test that __main__.py calls app() when run as __main__."""
-    with patch("py_verify.cli.app") as mock_app:
+    with patch("py_verify.cli.app") as _mock_app:
         # Simulate running as __main__
-        import importlib
         import py_verify.__main__
 
         # The if __name__ == "__main__" block won't trigger during import,

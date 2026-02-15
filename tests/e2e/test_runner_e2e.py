@@ -31,13 +31,13 @@ class TestRunnerSelfTest:
     def test_succeeds(self, e2e_project: Path):
         config = _make_config(e2e_project, tasks=["self-test"])
         runner = VerifyRunner(config)
-        exit_code, result = runner.run_and_get_result()
+        exit_code, _result = runner.run_and_get_result()
         assert exit_code == 0
 
     def test_result_structure(self, e2e_project: Path):
         config = _make_config(e2e_project, tasks=["self-test"])
         runner = VerifyRunner(config)
-        exit_code, result = runner.run_and_get_result()
+        _exit_code, result = runner.run_and_get_result()
         assert result.run_id
         assert result.status == StepStatus.SUCCESS
         assert len(result.steps) > 0
@@ -96,17 +96,13 @@ class TestRunnerConfigOptions:
         assert exit_code == 0
 
     def test_continue_mode(self, e2e_project: Path):
-        config = _make_config(
-            e2e_project, tasks=["self-test"], run_mode=RunMode.CONTINUE
-        )
+        config = _make_config(e2e_project, tasks=["self-test"], run_mode=RunMode.CONTINUE)
         runner = VerifyRunner(config)
         exit_code, _ = runner.run_and_get_result()
         assert exit_code == 0
 
     def test_fast_fail_mode(self, e2e_project: Path):
-        config = _make_config(
-            e2e_project, tasks=["self-test"], run_mode=RunMode.FAST_FAIL
-        )
+        config = _make_config(e2e_project, tasks=["self-test"], run_mode=RunMode.FAST_FAIL)
         runner = VerifyRunner(config)
         exit_code, _ = runner.run_and_get_result()
         assert exit_code == 0
@@ -130,17 +126,13 @@ class TestRunnerConfigOptions:
         assert exit_code == 0
 
     def test_min_severity_1(self, e2e_project: Path):
-        config = _make_config(
-            e2e_project, tasks=["self-test"], min_severity=Severity(1)
-        )
+        config = _make_config(e2e_project, tasks=["self-test"], min_severity=Severity(1))
         runner = VerifyRunner(config)
         exit_code, _ = runner.run_and_get_result()
         assert exit_code == 0
 
     def test_min_severity_5(self, e2e_project: Path):
-        config = _make_config(
-            e2e_project, tasks=["self-test"], min_severity=Severity(5)
-        )
+        config = _make_config(e2e_project, tasks=["self-test"], min_severity=Severity(5))
         runner = VerifyRunner(config)
         exit_code, _ = runner.run_and_get_result()
         assert exit_code == 0
@@ -239,9 +231,7 @@ class TestRunnerLinters:
         assert len(failed) > 0
 
     def test_flake8_issues_json(self, e2e_project_with_issues: Path):
-        config = _make_config(
-            e2e_project_with_issues, tasks=["flake8"], json_mode=True
-        )
+        config = _make_config(e2e_project_with_issues, tasks=["flake8"], json_mode=True)
         runner = VerifyRunner(config)
         exit_code, result = runner.run_and_get_result()
         assert exit_code == 1
@@ -254,7 +244,7 @@ class TestRunnerLinters:
             run_mode=RunMode.CONTINUE,
         )
         runner = VerifyRunner(config)
-        exit_code, result = runner.run_and_get_result()
+        exit_code, _result = runner.run_and_get_result()
         assert exit_code == 1
 
     def test_pyflakes_clean(self, e2e_project: Path):
@@ -266,7 +256,7 @@ class TestRunnerLinters:
     def test_pyflakes_issues(self, e2e_project_with_issues: Path):
         config = _make_config(e2e_project_with_issues, tasks=["pyflakes"])
         runner = VerifyRunner(config)
-        exit_code, result = runner.run_and_get_result()
+        exit_code, _result = runner.run_and_get_result()
         assert exit_code == 1
 
 
@@ -290,7 +280,7 @@ class TestRunnerAnalyzers:
         """bad.py has import inside function."""
         config = _make_config(e2e_project_with_issues, tasks=["imports"])
         runner = VerifyRunner(config)
-        exit_code, result = runner.run_and_get_result()
+        exit_code, _result = runner.run_and_get_result()
         # May or may not find issues depending on how bad.py is structured
         assert exit_code in (0, 1)
 
@@ -303,7 +293,7 @@ class TestRunnerAnalyzers:
     def test_standards_clean(self, e2e_project: Path):
         config = _make_config(e2e_project, tasks=["standards"])
         runner = VerifyRunner(config)
-        exit_code, result = runner.run_and_get_result()
+        exit_code, _result = runner.run_and_get_result()
         # Standards may flag missing annotations etc.
         assert exit_code in (0, 1)
 
@@ -327,9 +317,7 @@ class TestRunnerMultipleTasks:
         assert len(result.steps) >= 2
 
     def test_three_tasks(self, e2e_project: Path):
-        config = _make_config(
-            e2e_project, tasks=["self-test", "circular-deps", "imports"]
-        )
+        config = _make_config(e2e_project, tasks=["self-test", "circular-deps", "imports"])
         runner = VerifyRunner(config)
         exit_code, result = runner.run_and_get_result()
         assert exit_code == 0
@@ -343,9 +331,7 @@ class TestRunnerMultipleTasks:
         assert len(result.steps) >= 2
 
     def test_mixed_with_unknown(self, e2e_project: Path):
-        config = _make_config(
-            e2e_project, tasks=["self-test", "nonexistent-xyz", "imports"]
-        )
+        config = _make_config(e2e_project, tasks=["self-test", "nonexistent-xyz", "imports"])
         runner = VerifyRunner(config)
         exit_code, result = runner.run_and_get_result()
         assert exit_code == 0
@@ -367,7 +353,7 @@ class TestRunnerEdgeCases:
         """Empty tasks list uses default quality + tests."""
         config = _make_config(e2e_project, tasks=[], skip_tests=True)
         runner = VerifyRunner(config)
-        exit_code, result = runner.run_and_get_result()
+        exit_code, _result = runner.run_and_get_result()
         # Quality tasks may pass or fail
         assert exit_code in (0, 1)
 

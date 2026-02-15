@@ -31,9 +31,7 @@ class TestDetectVenv:
 
 class TestDetectPackageManager:
     def test_uv(self, tmp_path: Path, monkeypatch):
-        monkeypatch.setattr(
-            shutil, "which", lambda tool: "/usr/bin/uv" if tool == "uv" else None
-        )
+        monkeypatch.setattr(shutil, "which", lambda tool: "/usr/bin/uv" if tool == "uv" else None)
         vm = VenvManager(tmp_path)
         assert vm.detect_package_manager() == "uv"
 
@@ -76,9 +74,7 @@ class TestCheckToolAvailable:
 class TestGetToolVersion:
     def test_success(self, tmp_path: Path, monkeypatch):
         def mock_run(cmd, **kwargs):
-            return subprocess.CompletedProcess(
-                cmd, 0, stdout="ruff 0.15.0\n", stderr=""
-            )
+            return subprocess.CompletedProcess(cmd, 0, stdout="ruff 0.15.0\n", stderr="")
 
         monkeypatch.setattr(subprocess, "run", mock_run)
         vm = VenvManager(tmp_path)

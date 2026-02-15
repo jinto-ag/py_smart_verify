@@ -3,7 +3,6 @@
 import subprocess
 from pathlib import Path
 
-import typer
 from typer.testing import CliRunner
 
 import py_verify.cli
@@ -257,7 +256,7 @@ class TestAffectedCommand:
             return subprocess.CompletedProcess(cmd, 0, stdout="{}\n", stderr="")
 
         monkeypatch.setattr(subprocess, "run", mock_run)
-        result = runner.invoke(app, ["affected", "--json"])
+        _result = runner.invoke(app, ["affected", "--json"])
         assert "--json" in captured[0]
 
     def test_with_since(self, monkeypatch):
@@ -268,7 +267,7 @@ class TestAffectedCommand:
             return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
 
         monkeypatch.setattr(subprocess, "run", mock_run)
-        result = runner.invoke(app, ["affected", "--since", "develop"])
+        _result = runner.invoke(app, ["affected", "--since", "develop"])
         assert "--base" in captured[0]
 
     def test_with_staged(self, monkeypatch):
@@ -279,7 +278,7 @@ class TestAffectedCommand:
             return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
 
         monkeypatch.setattr(subprocess, "run", mock_run)
-        result = runner.invoke(app, ["affected", "--staged"])
+        _result = runner.invoke(app, ["affected", "--staged"])
         assert "--staged" in captured[0]
 
     def test_file_not_found(self, monkeypatch):

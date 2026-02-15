@@ -66,9 +66,7 @@ class TestFindPythonFiles:
         (pkg / "mod.py").write_text("x=1")
         pycache = pkg / "__pycache__"
         pycache.mkdir()
-        (pycache / "mod.cpython-311.pyc.py").write_text(
-            "x=1"
-        )  # fake .py in pycache name
+        (pycache / "mod.cpython-311.pyc.py").write_text("x=1")  # fake .py in pycache name
         disc = PathDiscovery(tmp_path)
         result = disc.find_python_files([pkg])
         assert all("__pycache__" not in str(p) for p in result)

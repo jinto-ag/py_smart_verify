@@ -31,9 +31,7 @@ class TestGetChangedFiles:
         def mock_run(cmd, **kwargs):
             calls.append(cmd)
             if "diff" in cmd and "--name-only" in cmd and "main" in cmd:
-                return subprocess.CompletedProcess(
-                    cmd, 0, stdout="a.py\nb.py\n", stderr=""
-                )
+                return subprocess.CompletedProcess(cmd, 0, stdout="a.py\nb.py\n", stderr="")
             return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
 
         monkeypatch.setattr(subprocess, "run", mock_run)
@@ -47,9 +45,7 @@ class TestGetChangedFiles:
 
         def mock_run(cmd, **kwargs):
             if "--cached" in cmd:
-                return subprocess.CompletedProcess(
-                    cmd, 0, stdout="staged.py\n", stderr=""
-                )
+                return subprocess.CompletedProcess(cmd, 0, stdout="staged.py\n", stderr="")
             return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
 
         monkeypatch.setattr(subprocess, "run", mock_run)
@@ -76,9 +72,7 @@ class TestGetChangedFiles:
 
         def mock_run(cmd, **kwargs):
             if cmd == ["git", "diff", "--name-only"]:
-                return subprocess.CompletedProcess(
-                    cmd, 0, stdout="unstaged.py\n", stderr=""
-                )
+                return subprocess.CompletedProcess(cmd, 0, stdout="unstaged.py\n", stderr="")
             return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
 
         monkeypatch.setattr(subprocess, "run", mock_run)
@@ -91,9 +85,7 @@ class TestGetChangedFiles:
 
         def mock_run(cmd, **kwargs):
             if "status" in cmd:
-                return subprocess.CompletedProcess(
-                    cmd, 0, stdout="?? new.py\n", stderr=""
-                )
+                return subprocess.CompletedProcess(cmd, 0, stdout="?? new.py\n", stderr="")
             return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
 
         monkeypatch.setattr(subprocess, "run", mock_run)
@@ -169,9 +161,7 @@ class TestGetChangedFiles:
 
         def mock_run(cmd, **kwargs):
             if "main" in cmd:
-                return subprocess.CompletedProcess(
-                    cmd, 0, stdout="c.py\na.py\nb.py\n", stderr=""
-                )
+                return subprocess.CompletedProcess(cmd, 0, stdout="c.py\na.py\nb.py\n", stderr="")
             return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
 
         monkeypatch.setattr(subprocess, "run", mock_run)
@@ -249,7 +239,11 @@ class TestGetDiffStats:
         (tmp_path / ".git").mkdir()
         git = GitIntegration(tmp_path)
 
-        stat_out = " file1.py | 3 +++\n file2.py | 2 +-\n 2 files changed, 4 insertions(+), 1 deletion(-)\n"
+        stat_out = (
+            " file1.py | 3 +++\n"
+            " file2.py | 2 +-\n"
+            " 2 files changed, 4 insertions(+), 1 deletion(-)\n"
+        )
 
         def mock_run(cmd, **kwargs):
             return subprocess.CompletedProcess(cmd, 0, stdout=stat_out, stderr="")

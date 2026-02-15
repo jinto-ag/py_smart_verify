@@ -3,7 +3,7 @@
 import subprocess
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 import typer
 
@@ -28,7 +28,7 @@ app = typer.Typer(
 
 @app.command()
 def verify(
-    tasks: Optional[list[str]] = typer.Argument(
+    tasks: list[str] | None = typer.Argument(  # noqa: B008
         None, help="Tasks to run (quality, tests, ruff, mypy, etc)"
     ),
     skip_tests: bool = typer.Option(False, "--skip-tests", help="Skip test execution"),
@@ -36,24 +36,18 @@ def verify(
     include_tests: bool = typer.Option(
         False, "--include-tests", help="Include test files in checks"
     ),
-    ignore_warnings: bool = typer.Option(
-        False, "--ignore-warnings", help="Ignore warnings"
-    ),
+    ignore_warnings: bool = typer.Option(False, "--ignore-warnings", help="Ignore warnings"),
     min_severity: int = typer.Option(
         5, "--min-severity", help="Minimum severity level to report (1-5)"
     ),
     continue_mode: bool = typer.Option(
         False, "--continue", help="Continue after errors (vs fast-fail)"
     ),
-    tools: Optional[str] = typer.Option(
+    tools: str | None = typer.Option(
         None, "--tools", help="Filter to specific tools (comma-separated)"
     ),
-    paths: Optional[str] = typer.Option(
-        None, "--paths", help="Paths to verify (comma-separated)"
-    ),
-    upgrade_deps: bool = typer.Option(
-        False, "--upgrade-deps", help="Upgrade tool dependencies"
-    ),
+    paths: str | None = typer.Option(None, "--paths", help="Paths to verify (comma-separated)"),
+    upgrade_deps: bool = typer.Option(False, "--upgrade-deps", help="Upgrade tool dependencies"),
     verbose: bool = typer.Option(False, "-v", "--verbose", help="Verbose output"),
     full_tests: bool = typer.Option(
         False, "--full-tests", help="Run all tests with smart prioritization"
@@ -62,9 +56,7 @@ def verify(
     staged: bool = typer.Option(
         False, "--staged", help="Test only staged changes (pre-commit mode)"
     ),
-    json_output: bool = typer.Option(
-        False, "--json", help="Output JSON to stdout (for AI agents)"
-    ),
+    json_output: bool = typer.Option(False, "--json", help="Output JSON to stdout (for AI agents)"),
     version: bool = typer.Option(None, "--version", help="Show version"),
 ) -> None:
     """Run verification checks on Python code."""
@@ -101,9 +93,9 @@ def verify(
 
 
 def _build_verify_config(
-    tasks: Optional[list[str]],
-    tools: Optional[str],
-    paths: Optional[str],
+    tasks: list[str] | None,
+    tools: str | None,
+    paths: str | None,
     skip_tests: bool,
     no_cache: bool,
     include_tests: bool,
@@ -161,15 +153,11 @@ def _build_verify_config(
 
 @app.command()
 def graph(
-    output: Optional[Path] = typer.Option(
+    output: Path | None = typer.Option(  # noqa: B008
         None, "--output", help="Output file for graph JSON"
     ),
-    paths: Optional[str] = typer.Option(
-        None, "--paths", help="Paths to analyze (comma-separated)"
-    ),
-    json_output: bool = typer.Option(
-        False, "--json", help="Output JSON to stdout (for AI agents)"
-    ),
+    paths: str | None = typer.Option(None, "--paths", help="Paths to analyze (comma-separated)"),
+    json_output: bool = typer.Option(False, "--json", help="Output JSON to stdout (for AI agents)"),
 ) -> None:
     """Build and display dependency graph."""
     project_root = Path.cwd()
@@ -223,11 +211,9 @@ def affected(
         if result.returncode != 0:
             console.print("[red]Error: pst-affected failed[/red]")
             raise typer.Exit(1)
-    except FileNotFoundError:
-        console.print(
-            "[red]py-smart-test-affected not found. Install py-smart-test.[/red]"
-        )
-        raise typer.Exit(1)
+    except FileNotFoundError as err:
+        console.print("[red]py-smart-test-affected not found. Install py-smart-test.[/red]")
+        raise typer.Exit(1) from err
 
 
 @app.command()
@@ -243,11 +229,9 @@ def regen_graph() -> None:
             raise typer.Exit(1)
         else:
             console.print("[green]Dependency graph regenerated[/green]")
-    except FileNotFoundError:
-        console.print(
-            "[red]py-smart-test-graph-gen not found. Install py-smart-test.[/red]"
-        )
-        raise typer.Exit(1)
+    except FileNotFoundError as err:
+        console.print("[red]py-smart-test-graph-gen not found. Install py-smart-test.[/red]")
+        raise typer.Exit(1) from err
 
 
 @app.command()
@@ -257,12 +241,12 @@ def mcp() -> None:
         from py_verify.mcp_server import main as mcp_main
 
         mcp_main()
-    except ImportError:
+    except ImportError as err:
         console.print(
             "[red]MCP dependencies not installed. "
             "Install with: pip install 'py-verify\\[mcp]'[/red]"
         )
-        raise typer.Exit(1)
+        raise typer.Exit(1) from err
 
 
 if __name__ == "__main__":

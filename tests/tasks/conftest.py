@@ -33,11 +33,6 @@ def task_paths(tmp_path: Path) -> list[Path]:
     pkg.mkdir(parents=True)
     (pkg / "__init__.py").write_text("")
     (pkg / "module.py").write_text(
-        '"""Module docstring."""\n'
-        "\n"
-        "\n"
-        "def hello() -> str:\n"
-        '    """Say hello."""\n'
-        '    return "hi"\n'
+        '"""Module docstring."""\n\n\ndef hello() -> str:\n    """Say hello."""\n    return "hi"\n'
     )
     return [tmp_path / "src"]

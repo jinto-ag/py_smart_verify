@@ -82,7 +82,7 @@ class IsortTask(BaseTask):
 
         exit_code, output = self._run_subprocess(cmd, log_path, allow_failure=True)
 
-        status = StepStatus.SUCCESS if exit_code == 0 else StepStatus.SUCCESS
+        status = StepStatus.SUCCESS
 
         return self._build_result(
             status=status,

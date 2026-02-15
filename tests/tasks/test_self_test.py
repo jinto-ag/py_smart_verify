@@ -1,7 +1,5 @@
 """Tests for py_verify.tasks.self_test."""
 
-from pathlib import Path
-
 from py_verify.models import StepStatus
 from py_verify.tasks.base import TaskCategory
 from py_verify.tasks.self_test import SelfTestTask

@@ -1,6 +1,6 @@
 """Task registry for py-verify."""
 
-from typing import Optional, Type, TypeVar
+from typing import TypeVar
 
 from py_verify.tasks.base import BaseTask, TaskCategory
 
@@ -12,10 +12,10 @@ class TaskRegistry:
 
     def __init__(self) -> None:
         """Initialize registry."""
-        self._tasks: dict[str, Type[BaseTask]] = {}
+        self._tasks: dict[str, type[BaseTask]] = {}
         self._aliases: dict[str, str] = {}
 
-    def register(self, task_class: Type[BaseTask]) -> None:
+    def register(self, task_class: type[BaseTask]) -> None:
         """Register a task class."""
         # Create a dummy instance to get metadata
         dummy_config = type("DummyConfig", (), {})()
@@ -31,14 +31,14 @@ class TaskRegistry:
             # Skip if metadata can't be extracted
             pass
 
-    def get(self, name: str) -> Optional[Type[BaseTask]]:
+    def get(self, name: str) -> type[BaseTask] | None:
         """Get task class by name or alias."""
         # Check if it's an alias
         if name in self._aliases:
             name = self._aliases[name]
         return self._tasks.get(name)
 
-    def get_by_category(self, category: TaskCategory) -> list[Type[BaseTask]]:
+    def get_by_category(self, category: TaskCategory) -> list[type[BaseTask]]:
         """Get all tasks of a category."""
         result = []
         for task_class in self._tasks.values():
@@ -66,7 +66,7 @@ class TaskRegistry:
                 resolved.append(name)
             else:
                 # Try to find partial matches
-                matching = [n for n in self._tasks.keys() if name.lower() in n.lower()]
+                matching = [n for n in self._tasks if name.lower() in n.lower()]
                 resolved.extend(matching)
         return sorted(set(resolved))
 
@@ -75,7 +75,7 @@ class TaskRegistry:
 task_registry = TaskRegistry()
 
 
-def register(task_class: Type[_T]) -> Type[_T]:
+def register(task_class: type[_T]) -> type[_T]:
     """Decorator to register a task."""
     task_registry.register(task_class)
     return task_class

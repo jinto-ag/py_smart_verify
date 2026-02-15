@@ -3,7 +3,6 @@
 import shutil
 import subprocess
 from pathlib import Path
-from types import SimpleNamespace
 
 from py_verify.models import Issue, StepResult, StepStatus
 from py_verify.tasks.base import BaseTask, TaskCategory, TaskMetadata
@@ -113,7 +112,7 @@ class TestRunSubprocess:
         monkeypatch.setattr(subprocess, "run", mock_run)
         task = ConcreteTask(task_config)
         log_path = task_config.log_dir / "test.log"
-        code, output = task._run_subprocess(["bad"], log_path)
+        code, _output = task._run_subprocess(["bad"], log_path)
         assert code == 1
 
     def test_stderr_logged(self, task_config, monkeypatch):

@@ -5,14 +5,17 @@ import subprocess
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
-from typing import Optional
+from typing import TYPE_CHECKING
 
 from py_verify.models import Issue, StepResult, StepStatus
 
+if TYPE_CHECKING:
+    from py_verify.config import VerifyConfig
 
-class TaskCategory(str, Enum):
+
+class TaskCategory(StrEnum):
     """Task categories."""
 
     FORMATTER = "formatter"
@@ -42,7 +45,7 @@ class TaskMetadata:
 class BaseTask(ABC):
     """Abstract base class for all verification tasks."""
 
-    def __init__(self, config) -> None:
+    def __init__(self, config: "VerifyConfig") -> None:
         """Initialize task with config."""
         self.config = config
         self.metadata = self._get_metadata()
@@ -96,10 +99,10 @@ class BaseTask(ABC):
         self,
         status: StepStatus,
         exit_code: int = 0,
-        command: Optional[str] = None,
-        log_path: Optional[Path] = None,
+        command: str | None = None,
+        log_path: Path | None = None,
         output: str = "",
-        issues: Optional[list[Issue]] = None,
+        issues: list[Issue] | None = None,
     ) -> StepResult:
         """Build a StepResult."""
         now = datetime.now().timestamp()

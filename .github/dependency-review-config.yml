@@ -1,15 +1,32 @@
 fail_on_severity: moderate
 allow_licenses:
   - "MIT"
+  - "MIT-0"
   - "Apache-2.0"
   - "BSD-2-Clause"
   - "BSD-3-Clause"
   - "ISC"
   - "CC0-1.0"
+  - "0BSD"
   - "Unlicense"
   - "PSF-2.0"
   - "MPL-2.0"
   - "Python-2.0"
+  - "Python-2.0.1"
+  - "GPL-1.0-or-later"
+  - "HPND-Markus-Kuhn"
+allow_dependencies_licenses:
+  - "pkg:pypi/cffi"
+  - "pkg:pypi/mypy"
+  - "pkg:pypi/typing-extensions"
+  - "pkg:pypi/wcwidth"
+  - "pkg:pypi/basedpyright"
+  - "pkg:pypi/packaging"
+  - "pkg:pypi/pycparser"
+  - "pkg:pypi/lance-namespace"
+  - "pkg:pypi/lance-namespace-urllib3-client"
+  - "pkg:pypi/librt"
+  - "pkg:pypi/pyarrow"
 fail_on_scopes:
   - "runtime"
 vulnerability_check: true

@@ -1,11 +1,10 @@
 """Shared fixtures for py-verify tests."""
 
 from pathlib import Path
-from types import SimpleNamespace
 
 import pytest
 
-from py_verify.config import RunMode, Severity, VerifyConfig
+from py_verify.config import VerifyConfig
 from py_verify.models import Issue, StepResult, StepStatus
 
 

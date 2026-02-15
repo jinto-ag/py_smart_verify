@@ -4,7 +4,6 @@ from pathlib import Path
 
 from py_verify.config import RunMode, Severity, VerifyConfig
 
-
 # --- Severity enum ---
 
 

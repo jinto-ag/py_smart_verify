@@ -3,7 +3,6 @@
 import ast
 import shutil
 from pathlib import Path
-from types import SimpleNamespace
 
 from py_verify.models import StepStatus
 from py_verify.tasks.analyzers import (
@@ -17,7 +16,6 @@ from py_verify.tasks.analyzers import (
     StandardsTask,
 )
 from py_verify.tasks.base import TaskCategory
-
 
 # --- DeprecationsTask ---
 
@@ -290,9 +288,7 @@ class TestStandardsChecker:
         tree = ast.parse(source, str(f))
         checker = StandardsChecker(f, tmp_path, source)
         checker.visit(tree)
-        docstring_issues = [
-            i for i in checker.issues if "docstring" in i.message.lower()
-        ]
+        docstring_issues = [i for i in checker.issues if "docstring" in i.message.lower()]
         assert docstring_issues == []
 
     def test_long_function(self, tmp_path: Path):
@@ -326,9 +322,7 @@ class TestStandardsChecker:
         tree = ast.parse(source, str(f))
         checker = StandardsChecker(f, tmp_path, source)
         checker.visit(tree)
-        annotation_issues = [
-            i for i in checker.issues if "annotation" in i.message.lower()
-        ]
+        annotation_issues = [i for i in checker.issues if "annotation" in i.message.lower()]
         assert len(annotation_issues) == 1
 
     def test_has_annotation(self, tmp_path: Path):
@@ -338,15 +332,11 @@ class TestStandardsChecker:
         tree = ast.parse(source, str(f))
         checker = StandardsChecker(f, tmp_path, source)
         checker.visit(tree)
-        annotation_issues = [
-            i for i in checker.issues if "annotation" in i.message.lower()
-        ]
+        annotation_issues = [i for i in checker.issues if "annotation" in i.message.lower()]
         assert annotation_issues == []
 
     def test_all_clean(self, tmp_path: Path):
-        source = (
-            'def greet(name: str) -> str:\n    """Greet."""\n    return f"hi {name}"\n'
-        )
+        source = 'def greet(name: str) -> str:\n    """Greet."""\n    return f"hi {name}"\n'
         f = tmp_path / "mod.py"
         f.write_text(source)
         tree = ast.parse(source, str(f))
@@ -366,9 +356,7 @@ class TestStandardsTask:
 
     def test_clean(self, task_config, tmp_path: Path):
         f = tmp_path / "clean.py"
-        f.write_text(
-            'def greet(name: str) -> str:\n    """Greet."""\n    return f"hi {name}"\n'
-        )
+        f.write_text('def greet(name: str) -> str:\n    """Greet."""\n    return f"hi {name}"\n')
         task = StandardsTask(task_config)
         result = task.execute([f])
         assert result.status == StepStatus.SUCCESS

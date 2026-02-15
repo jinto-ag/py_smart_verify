@@ -11,7 +11,7 @@ import pytest
 
 mcp_mod = pytest.importorskip("mcp")
 
-from py_verify.mcp_server import (
+from py_verify.mcp_server import (  # noqa: E402  # isort: skip
     affected,
     config_resource,
     graph,

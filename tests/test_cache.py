@@ -9,7 +9,7 @@ class TestCacheManager:
     def test_init_creates_directory(self, tmp_path: Path):
         cache_dir = tmp_path / "cache"
         assert not cache_dir.exists()
-        cm = CacheManager(cache_dir)
+        _cm = CacheManager(cache_dir)
         assert cache_dir.exists()
 
     # --- compute_hash ---

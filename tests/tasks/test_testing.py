@@ -1,10 +1,6 @@
 """Tests for py_verify.tasks.testing."""
 
-import shutil
 import subprocess
-from pathlib import Path
-
-import pytest
 
 from py_verify.models import StepStatus
 from py_verify.tasks.base import TaskCategory
@@ -16,7 +12,6 @@ from py_verify.tasks.testing import (
     RegenerateGraphTask,
     SmartTestTask,
 )
-
 
 # --- SmartTestTask ---
 
@@ -44,9 +39,7 @@ class TestSmartTestTask:
 
     def test_failure(self, task_config, monkeypatch):
         def mock_run(cmd, **kwargs):
-            return subprocess.CompletedProcess(
-                cmd, 1, stdout="FAILED test_x\n", stderr=""
-            )
+            return subprocess.CompletedProcess(cmd, 1, stdout="FAILED test_x\n", stderr="")
 
         monkeypatch.setattr(subprocess, "run", mock_run)
         task = SmartTestTask(task_config)
@@ -123,9 +116,7 @@ class TestFullTestTask:
 
     def test_failure(self, task_config, monkeypatch):
         def mock_run(cmd, **kwargs):
-            return subprocess.CompletedProcess(
-                cmd, 1, stdout="FAILED test_x\n", stderr=""
-            )
+            return subprocess.CompletedProcess(cmd, 1, stdout="FAILED test_x\n", stderr="")
 
         monkeypatch.setattr(subprocess, "run", mock_run)
         task = FullTestTask(task_config)
@@ -184,9 +175,7 @@ class TestE2ETestTask:
 
     def test_failure(self, task_config, monkeypatch):
         def mock_run(cmd, **kwargs):
-            return subprocess.CompletedProcess(
-                cmd, 1, stdout="FAILED test_e2e\n", stderr=""
-            )
+            return subprocess.CompletedProcess(cmd, 1, stdout="FAILED test_e2e\n", stderr="")
 
         monkeypatch.setattr(subprocess, "run", mock_run)
         task = E2ETestTask(task_config)
@@ -252,9 +241,7 @@ class TestFullE2ETestTask:
 
     def test_failure(self, task_config, monkeypatch):
         def mock_run(cmd, **kwargs):
-            return subprocess.CompletedProcess(
-                cmd, 1, stdout="FAILED test_full\n", stderr=""
-            )
+            return subprocess.CompletedProcess(cmd, 1, stdout="FAILED test_full\n", stderr="")
 
         monkeypatch.setattr(subprocess, "run", mock_run)
         task = FullE2ETestTask(task_config)

@@ -1,12 +1,9 @@
 """Tests for py_verify.runner."""
 
 from pathlib import Path
-from types import SimpleNamespace
-from unittest.mock import MagicMock
 
 import py_verify.console
 import py_verify.runner
-from py_verify.cache import CacheManager
 from py_verify.config import RunMode, VerifyConfig
 from py_verify.models import StepResult, StepStatus
 from py_verify.runner import VerifyRunner
@@ -47,7 +44,9 @@ def _make_config(tmp_path: Path, **overrides) -> VerifyConfig:
 def _silence_console(monkeypatch):
     """Silence all console output."""
     from io import StringIO
+
     from rich.console import Console
+
     from py_verify.console import get_theme
 
     buf = StringIO()
@@ -357,8 +356,6 @@ class TestRun:
         config = _make_config(tmp_path)
         runner = VerifyRunner(config)
         # Force _setup to raise
-        monkeypatch.setattr(
-            runner, "_setup", lambda: (_ for _ in ()).throw(RuntimeError("boom"))
-        )
+        monkeypatch.setattr(runner, "_setup", lambda: (_ for _ in ()).throw(RuntimeError("boom")))
         exit_code = runner.run()
         assert exit_code == 1

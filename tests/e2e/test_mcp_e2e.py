@@ -14,7 +14,7 @@ import pytest
 
 pytest.importorskip("mcp")
 
-from py_verify.mcp_server import (
+from py_verify.mcp_server import (  # noqa: E402  # isort: skip
     affected,
     config_resource,
     graph,
@@ -22,12 +22,11 @@ from py_verify.mcp_server import (
     last_run_resource,
     list_tasks,
     main,
-    mcp as mcp_instance,
     regen_graph,
     tasks_resource,
     verify,
 )
-
+from py_verify.mcp_server import mcp as mcp_instance  # noqa: E402  # isort: skip
 
 # ─── verify tool ─────────────────────────────────────────────────────────
 
@@ -84,16 +83,12 @@ class TestMCPVerifyTool:
 
     def test_continue_on_error(self, monkeypatch, e2e_project: Path):
         monkeypatch.setattr(Path, "cwd", lambda: e2e_project)
-        data = json.loads(
-            verify(tasks=["self-test"], no_cache=True, continue_on_error=True)
-        )
+        data = json.loads(verify(tasks=["self-test"], no_cache=True, continue_on_error=True))
         assert data["status"] == "success"
 
     def test_paths_filter(self, monkeypatch, e2e_project: Path):
         monkeypatch.setattr(Path, "cwd", lambda: e2e_project)
-        data = json.loads(
-            verify(tasks=["self-test"], no_cache=True, paths=["src"])
-        )
+        data = json.loads(verify(tasks=["self-test"], no_cache=True, paths=["src"]))
         assert data["status"] == "success"
 
     def test_all_params_combined(self, monkeypatch, e2e_project: Path):
@@ -127,9 +122,7 @@ class TestMCPVerifyTool:
 
     def test_multiple_tasks(self, monkeypatch, e2e_project: Path):
         monkeypatch.setattr(Path, "cwd", lambda: e2e_project)
-        data = json.loads(
-            verify(tasks=["self-test", "circular-deps"], no_cache=True)
-        )
+        data = json.loads(verify(tasks=["self-test", "circular-deps"], no_cache=True))
         assert len(data["steps"]) >= 2
 
 
@@ -184,9 +177,7 @@ class TestMCPAffectedTool:
     def test_since_param(self):
         """affected(since='HEAD~3') passes --base HEAD~3."""
         with patch("subprocess.run") as mock_run:
-            mock_run.return_value = MagicMock(
-                stdout='{"affected": []}', returncode=0
-            )
+            mock_run.return_value = MagicMock(stdout='{"affected": []}', returncode=0)
             affected(since="HEAD~3")
             cmd = mock_run.call_args[0][0]
             assert "--base" in cmd
@@ -195,9 +186,7 @@ class TestMCPAffectedTool:
     def test_since_main_no_base(self):
         """affected(since='main') does NOT pass --base."""
         with patch("subprocess.run") as mock_run:
-            mock_run.return_value = MagicMock(
-                stdout='{"affected": []}', returncode=0
-            )
+            mock_run.return_value = MagicMock(stdout='{"affected": []}', returncode=0)
             affected(since="main")
             cmd = mock_run.call_args[0][0]
             assert "--base" not in cmd
@@ -205,9 +194,7 @@ class TestMCPAffectedTool:
     def test_staged(self):
         """affected(staged=True) passes --staged."""
         with patch("subprocess.run") as mock_run:
-            mock_run.return_value = MagicMock(
-                stdout='{"affected": []}', returncode=0
-            )
+            mock_run.return_value = MagicMock(stdout='{"affected": []}', returncode=0)
             affected(staged=True)
             cmd = mock_run.call_args[0][0]
             assert "--staged" in cmd
@@ -215,9 +202,7 @@ class TestMCPAffectedTool:
     def test_all_params(self):
         """affected(since='HEAD', staged=True) passes both flags."""
         with patch("subprocess.run") as mock_run:
-            mock_run.return_value = MagicMock(
-                stdout='{"affected": []}', returncode=0
-            )
+            mock_run.return_value = MagicMock(stdout='{"affected": []}', returncode=0)
             affected(since="HEAD", staged=True)
             cmd = mock_run.call_args[0][0]
             assert "--base" in cmd
@@ -257,9 +242,7 @@ class TestMCPRegenGraphTool:
     def test_success(self):
         """Successful regen_graph returns success=True."""
         with patch("subprocess.run") as mock_run:
-            mock_run.return_value = MagicMock(
-                stdout="Graph generated.", stderr="", returncode=0
-            )
+            mock_run.return_value = MagicMock(stdout="Graph generated.", stderr="", returncode=0)
             result = regen_graph()
             data = json.loads(result)
             assert data["success"] is True
@@ -268,9 +251,7 @@ class TestMCPRegenGraphTool:
     def test_failure(self):
         """Failed regen_graph returns success=False with error."""
         with patch("subprocess.run") as mock_run:
-            mock_run.return_value = MagicMock(
-                stdout="", stderr="Some error", returncode=1
-            )
+            mock_run.return_value = MagicMock(stdout="", stderr="Some error", returncode=1)
             result = regen_graph()
             data = json.loads(result)
             assert data["success"] is False
@@ -326,10 +307,9 @@ class TestMCPListTasksTool:
             "phase",
         }
         for task in data:
-            assert required_keys.issubset(task.keys()), (
-                f"Task {task.get('name')} missing keys: "
-                f"{required_keys - set(task.keys())}"
-            )
+            assert required_keys.issubset(
+                task.keys()
+            ), f"Task {task.get('name')} missing keys: {required_keys - set(task.keys())}"
 
 
 # ─── last_run_resource ───────────────────────────────────────────────────

@@ -1,16 +1,16 @@
 """Path discovery for py-verify."""
 
 from pathlib import Path
-from typing import Optional
+from typing import ClassVar
 
 
 class PathDiscovery:
     """Discovers Python files and paths in a project."""
 
     # Common source directories to check
-    COMMON_SRC_DIRS = ["src", "lib", "app", "scripts"]
+    COMMON_SRC_DIRS: ClassVar[list[str]] = ["src", "lib", "app", "scripts"]
 
-    def __init__(self, project_root: Path = Path.cwd()) -> None:
+    def __init__(self, project_root: Path = Path.cwd()) -> None:  # noqa: B008
         """Initialize path discovery."""
         self.project_root = project_root
 
@@ -45,7 +45,7 @@ class PathDiscovery:
         self,
         paths: list[Path],
         scope: str = "all",
-        exclude_dirs: Optional[list[str]] = None,
+        exclude_dirs: list[str] | None = None,
     ) -> list[Path]:
         """Find Python files in paths with optional scope filtering."""
         if exclude_dirs is None:

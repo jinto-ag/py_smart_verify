@@ -7,7 +7,7 @@ from pathlib import Path
 class GitIntegration:
     """Manages Git operations for py-verify."""
 
-    def __init__(self, project_root: Path = Path.cwd()) -> None:
+    def __init__(self, project_root: Path = Path.cwd()) -> None:  # noqa: B008
         """Initialize Git integration."""
         self.project_root = project_root
 

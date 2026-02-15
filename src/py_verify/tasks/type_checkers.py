@@ -1,5 +1,6 @@
 """Type checker tasks for py-verify."""
 
+import contextlib
 from pathlib import Path
 
 from py_verify.models import Issue, StepResult, StepStatus
@@ -57,7 +58,7 @@ class MypyTask(BaseTask):
             # mypy format: file.py:line:col: error: message
             parts = line.split(":", 4)
             if len(parts) >= 5:
-                try:
+                with contextlib.suppress(ValueError):
                     issues.append(
                         Issue(
                             file=parts[0],
@@ -68,8 +69,6 @@ class MypyTask(BaseTask):
                             source_task="mypy",
                         )
                     )
-                except ValueError:
-                    pass
         return issues
 
 
@@ -123,7 +122,7 @@ class PyrightTask(BaseTask):
             # pyright format similar to mypy
             parts = line.split(":", 4)
             if len(parts) >= 5:
-                try:
+                with contextlib.suppress(ValueError):
                     issues.append(
                         Issue(
                             file=parts[0],
@@ -134,8 +133,6 @@ class PyrightTask(BaseTask):
                             source_task="pyright",
                         )
                     )
-                except ValueError:
-                    pass
         return issues
 
 
@@ -188,7 +185,7 @@ class BasedPyrightTask(BaseTask):
                 continue
             parts = line.split(":", 4)
             if len(parts) >= 5:
-                try:
+                with contextlib.suppress(ValueError):
                     issues.append(
                         Issue(
                             file=parts[0],
@@ -199,6 +196,4 @@ class BasedPyrightTask(BaseTask):
                             source_task="basedpyright",
                         )
                     )
-                except ValueError:
-                    pass
         return issues

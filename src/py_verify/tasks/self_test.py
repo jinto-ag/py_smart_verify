@@ -46,9 +46,7 @@ class SelfTestTask(BaseTask):
         tests.append(test2)
 
         # Test 3: Cache directory
-        cache_ok = (
-            self.config.cache_dir.exists() or self.config.cache_dir.parent.exists()
-        )
+        cache_ok = self.config.cache_dir.exists() or self.config.cache_dir.parent.exists()
         test3 = {
             "name": "Cache Directory",
             "passed": cache_ok,
@@ -68,7 +66,7 @@ class SelfTestTask(BaseTask):
         # Write test results
         results = []
         for test in tests:
-            status = "✓" if test["passed"] else "✗"
+            status = "PASS" if test["passed"] else "FAIL"
             results.append(f"{status} {test['name']}: {test['message']}")
 
         log_path.write_text("\n".join(results))

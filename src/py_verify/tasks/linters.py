@@ -1,5 +1,6 @@
 """Linter tasks for py-verify."""
 
+import contextlib
 from pathlib import Path
 
 from py_verify.models import Issue, StepResult, StepStatus
@@ -57,7 +58,7 @@ class Flake8Task(BaseTask):
             # flake8 format: file.py:line:col: code message
             parts = line.split(":", 3)
             if len(parts) >= 4:
-                try:
+                with contextlib.suppress(ValueError):
                     issues.append(
                         Issue(
                             file=parts[0],
@@ -68,8 +69,6 @@ class Flake8Task(BaseTask):
                             source_task="flake8",
                         )
                     )
-                except ValueError:
-                    pass
         return issues
 
 
@@ -124,7 +123,7 @@ class PyflakesTask(BaseTask):
             # pyflakes format: file.py:line: message
             parts = line.split(":", 2)
             if len(parts) >= 3:
-                try:
+                with contextlib.suppress(ValueError):
                     issues.append(
                         Issue(
                             file=parts[0],
@@ -134,6 +133,4 @@ class PyflakesTask(BaseTask):
                             source_task="pyflakes",
                         )
                     )
-                except ValueError:
-                    pass
         return issues

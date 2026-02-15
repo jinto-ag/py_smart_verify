@@ -25,7 +25,7 @@ class TestBuild:
 
         builder = DependencyGraphBuilder(tmp_path)
         graph = builder.build([pkg / "a.py"])
-        node = list(graph.nodes.values())[0]
+        node = next(iter(graph.nodes.values()))
         assert "os" in node.imports
         assert "sys" in node.imports
 
@@ -230,9 +230,7 @@ class TestDetectCycles:
     def test_node_not_in_graph(self):
         builder = DependencyGraphBuilder()
         graph = DependencyGraph()
-        graph.nodes["a"] = DependencyNode(
-            module="a", file="a.py", imports=["nonexistent"]
-        )
+        graph.nodes["a"] = DependencyNode(module="a", file="a.py", imports=["nonexistent"])
         # Should not crash - nonexistent import is just not traversed
         cycles = builder.detect_cycles(graph)
         assert cycles == []
@@ -269,12 +267,8 @@ class TestJsonRoundTrip:
 
     def test_roundtrip(self, tmp_path: Path):
         builder = DependencyGraphBuilder(tmp_path)
-        builder.graph.nodes["x"] = DependencyNode(
-            module="x", file="x.py", imports=["y"]
-        )
-        builder.graph.nodes["y"] = DependencyNode(
-            module="y", file="y.py", imported_by=["x"]
-        )
+        builder.graph.nodes["x"] = DependencyNode(module="x", file="x.py", imports=["y"])
+        builder.graph.nodes["y"] = DependencyNode(module="y", file="y.py", imported_by=["x"])
         builder.graph.cycles = [["x", "y", "x"]]
 
         out = tmp_path / "g.json"

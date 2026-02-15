@@ -16,10 +16,7 @@ class QualityCompositeTask(BaseTask):
             name="quality",
             display_name="Quality Checks",
             category=TaskCategory.COMPOSITE,
-            description=(
-                "Run all quality checks (formatters, "
-                "linters, type checkers, analyzers)"
-            ),
+            description=("Run all quality checks (formatters, linters, type checkers, analyzers)"),
             tool_name="python",
             aliases=["quality", "qa"],
             cache_scope="quality",

@@ -3,7 +3,7 @@
 import ast
 import json
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from py_verify.models import DependencyGraph, DependencyNode
 
@@ -11,7 +11,7 @@ from py_verify.models import DependencyGraph, DependencyNode
 class DependencyGraphBuilder:
     """Builds and analyzes import dependencies."""
 
-    def __init__(self, project_root: Path = Path.cwd()) -> None:
+    def __init__(self, project_root: Path = Path.cwd()) -> None:  # noqa: B008
         """Initialize graph builder."""
         self.project_root = project_root
         self.graph = DependencyGraph()
@@ -61,13 +61,12 @@ class DependencyGraphBuilder:
             if isinstance(node, ast.Import):
                 for alias in node.names:
                     imports.add(alias.name.split(".")[0])
-            elif isinstance(node, ast.ImportFrom):
-                if node.module:
-                    imports.add(node.module.split(".")[0])
+            elif isinstance(node, ast.ImportFrom) and node.module:
+                imports.add(node.module.split(".")[0])
 
         return sorted(imports)
 
-    def _file_to_module(self, file_path: Path) -> Optional[str]:
+    def _file_to_module(self, file_path: Path) -> str | None:
         """Convert file path to module name."""
         try:
             rel_path = file_path.relative_to(self.project_root)
@@ -91,9 +90,7 @@ class DependencyGraphBuilder:
         parts.append(rel_path.stem)  # Add module name without .py
 
         # Skip source directory prefixes
-        filtered = [
-            p for p in parts if p not in ["src", "lib", "app", "scripts", "__init__"]
-        ]
+        filtered = [p for p in parts if p not in ["src", "lib", "app", "scripts", "__init__"]]
 
         if not filtered:
             return None
@@ -120,7 +117,7 @@ class DependencyGraphBuilder:
                     elif imported in rec_stack:
                         # Found a cycle
                         cycle_start = path.index(imported)
-                        cycle = path[cycle_start:] + [imported]
+                        cycle = [*path[cycle_start:], imported]
                         if cycle not in cycles:
                             cycles.append(cycle)
 

@@ -10,7 +10,6 @@ Usage:
 
 import json
 from pathlib import Path
-from typing import Optional
 
 from mcp.server.fastmcp import FastMCP
 
@@ -25,8 +24,8 @@ mcp = FastMCP(
 
 @mcp.tool()
 def verify(
-    tasks: Optional[list[str]] = None,
-    paths: Optional[list[str]] = None,
+    tasks: list[str] | None = None,
+    paths: list[str] | None = None,
     skip_tests: bool = False,
     no_cache: bool = False,
     full_tests: bool = False,
@@ -62,7 +61,7 @@ def verify(
 
 
 @mcp.tool()
-def graph(paths: Optional[list[str]] = None) -> str:
+def graph(paths: list[str] | None = None) -> str:
     """Build and return the dependency graph for the project.
 
     Returns JSON with all modules, their imports, and any circular dependencies.
@@ -101,9 +100,7 @@ def affected(since: str = "main", staged: bool = False) -> str:
             return result.stdout
         return json.dumps({"affected": [], "error": None})
     except FileNotFoundError:
-        return json.dumps(
-            {"error": "py-smart-test-affected not found. Install py-smart-test."}
-        )
+        return json.dumps({"error": "py-smart-test-affected not found. Install py-smart-test."})
     except subprocess.TimeoutExpired:
         return json.dumps({"error": "Command timed out"})
 
@@ -214,7 +211,8 @@ def tasks_resource() -> str:
 
     Returns all registered tasks, their categories, tool requirements, etc.
     """
-    return list_tasks()
+    result: str = list_tasks()
+    return result
 
 
 @mcp.resource("pyverify://config")

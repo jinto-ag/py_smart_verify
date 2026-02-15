@@ -2,7 +2,6 @@
 
 import shutil
 import subprocess
-from pathlib import Path
 
 from py_verify.models import StepStatus
 from py_verify.tasks.base import TaskCategory
@@ -38,9 +37,7 @@ class TestFormatTask:
         monkeypatch.setattr(shutil, "which", lambda tool: "/usr/bin/" + tool)
 
         def mock_run(cmd, **kwargs):
-            return subprocess.CompletedProcess(
-                cmd, 1, stdout="reformatted\n", stderr=""
-            )
+            return subprocess.CompletedProcess(cmd, 1, stdout="reformatted\n", stderr="")
 
         monkeypatch.setattr(subprocess, "run", mock_run)
         task = FormatTask(task_config)

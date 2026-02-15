@@ -2,7 +2,6 @@
 
 import hashlib
 from pathlib import Path
-from typing import Optional
 
 
 class CacheManager:
@@ -44,7 +43,7 @@ class CacheManager:
         ok_file.write_text("ok")
         time_file.write_text(str(duration))
 
-    def get_last_duration(self, scope: str) -> Optional[float]:
+    def get_last_duration(self, scope: str) -> float | None:
         """Get duration of last successful run."""
         time_file = self.cache_dir / f".{scope}.time"
         if time_file.exists():
@@ -66,7 +65,7 @@ class CacheManager:
         hash_file = self.cache_dir / f".{scope}.hash"
         hash_file.write_text(file_hash)
 
-    def get_saved_hash(self, scope: str) -> Optional[str]:
+    def get_saved_hash(self, scope: str) -> str | None:
         """Get saved hash for a scope."""
         hash_file = self.cache_dir / f".{scope}.hash"
         if hash_file.exists():

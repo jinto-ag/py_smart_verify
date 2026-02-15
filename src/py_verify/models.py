@@ -2,14 +2,14 @@
 
 import json
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class StepStatus(str, Enum):
+class StepStatus(StrEnum):
     """Status of a verification step."""
 
     PENDING = "pending"
@@ -24,12 +24,12 @@ class Issue(BaseModel):
     """Represents an issue found during verification."""
 
     file: str = Field(description="File path")
-    line: Optional[int] = Field(default=None, description="Line number")
-    col: Optional[int] = Field(default=None, description="Column number")
+    line: int | None = Field(default=None, description="Line number")
+    col: int | None = Field(default=None, description="Column number")
     type: str = Field(description="Issue type (error, warning, note)")
     severity: int = Field(default=5, description="Severity level (1-5, 1=critical)")
     message: str = Field(description="Issue message")
-    action: Optional[str] = Field(default=None, description="Suggested action")
+    action: str | None = Field(default=None, description="Suggested action")
     source_task: str = Field(description="Task that found this issue")
 
 
@@ -40,11 +40,11 @@ class StepResult(BaseModel):
 
     name: str = Field(description="Task name")
     status: StepStatus = Field(description="Execution status")
-    start_epoch: Optional[float] = Field(default=None, description="Start time (epoch)")
-    end_epoch: Optional[float] = Field(default=None, description="End time (epoch)")
+    start_epoch: float | None = Field(default=None, description="Start time (epoch)")
+    end_epoch: float | None = Field(default=None, description="End time (epoch)")
     exit_code: int = Field(default=0, description="Exit code")
-    log_path: Optional[Path] = Field(default=None, description="Log file path")
-    command: Optional[str] = Field(default=None, description="Command executed")
+    log_path: Path | None = Field(default=None, description="Log file path")
+    command: str | None = Field(default=None, description="Command executed")
     issues: list[Issue] = Field(default_factory=list, description="Issues found")
 
     @property
@@ -72,9 +72,7 @@ class DependencyNode(BaseModel):
     module: str = Field(description="Module name")
     file: str = Field(description="File path")
     imports: list[str] = Field(default_factory=list, description="Imported modules")
-    imported_by: list[str] = Field(
-        default_factory=list, description="Modules that import this"
-    )
+    imported_by: list[str] = Field(default_factory=list, description="Modules that import this")
 
 
 class DependencyGraph(BaseModel):
@@ -91,7 +89,7 @@ class RunResult(BaseModel):
 
     run_id: str = Field(description="Unique run ID")
     started_at: float = Field(description="Start time (epoch)")
-    finished_at: Optional[float] = Field(default=None, description="End time (epoch)")
+    finished_at: float | None = Field(default=None, description="End time (epoch)")
     status: StepStatus = Field(default=StepStatus.PENDING, description="Overall status")
     steps: list[StepResult] = Field(default_factory=list, description="All steps")
 

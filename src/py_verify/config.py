@@ -1,6 +1,6 @@
 """Configuration models for py-verify."""
 
-from enum import Enum, IntEnum
+from enum import IntEnum, StrEnum
 from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -16,7 +16,7 @@ class Severity(IntEnum):
     INFO = 5
 
 
-class RunMode(str, Enum):
+class RunMode(StrEnum):
     """Execution mode for running tasks."""
 
     FAST_FAIL = "fast-fail"
@@ -30,17 +30,13 @@ class VerifyConfig(BaseModel):
 
     # Core execution
     tasks: list[str] = Field(default_factory=list, description="Tasks to run")
-    tools_filter: list[str] = Field(
-        default_factory=list, description="Filter to specific tools"
-    )
+    tools_filter: list[str] = Field(default_factory=list, description="Filter to specific tools")
     paths: list[str] = Field(default_factory=list, description="Paths to verify")
 
     # Behavior flags
     skip_tests: bool = Field(default=False, description="Skip test execution")
     no_cache: bool = Field(default=False, description="Disable caching")
-    include_tests: bool = Field(
-        default=False, description="Include test files in checks"
-    )
+    include_tests: bool = Field(default=False, description="Include test files in checks")
     ignore_warnings: bool = Field(default=False, description="Ignore warnings")
     min_severity: Severity = Field(
         default=Severity.INFO, description="Minimum severity level to report"
@@ -54,12 +50,8 @@ class VerifyConfig(BaseModel):
         default=False,
         description="Run all tests with smart prioritization (--smart-first)",
     )
-    since: str = Field(
-        default="main", description="Git ref for smart test diff (default: main)"
-    )
-    staged: bool = Field(
-        default=False, description="Use only staged changes for smart tests"
-    )
+    since: str = Field(default="main", description="Git ref for smart test diff (default: main)")
+    staged: bool = Field(default=False, description="Use only staged changes for smart tests")
 
     # Output and verbosity
     verbose: bool = Field(default=False, description="Verbose output")

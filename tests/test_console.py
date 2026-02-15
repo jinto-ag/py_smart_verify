@@ -59,9 +59,7 @@ class TestPrintStepStart:
 class TestPrintStepResult:
     def test_success(self, monkeypatch):
         buf = _capture(monkeypatch)
-        step = StepResult(
-            name="Test", status=StepStatus.SUCCESS, start_epoch=0, end_epoch=1.5
-        )
+        step = StepResult(name="Test", status=StepStatus.SUCCESS, start_epoch=0, end_epoch=1.5)
         print_step_result(step)
         output = buf.getvalue()
         assert "Test" in output
@@ -113,12 +111,8 @@ class TestPrintStepResult:
     def test_with_issues(self, monkeypatch):
         buf = _capture(monkeypatch)
         issues = [
-            Issue(
-                file="a.py", line=10, type="error", message="bad", source_task="test"
-            ),
-            Issue(
-                file="b.py", line=20, type="error", message="worse", source_task="test"
-            ),
+            Issue(file="a.py", line=10, type="error", message="bad", source_task="test"),
+            Issue(file="b.py", line=20, type="error", message="worse", source_task="test"),
         ]
         step = StepResult(name="Test", status=StepStatus.FAILED, issues=issues)
         print_step_result(step)
@@ -144,7 +138,7 @@ class TestPrintStepResult:
         assert "more" in output
 
     def test_no_issues(self, monkeypatch):
-        buf = _capture(monkeypatch)
+        _buf = _capture(monkeypatch)
         step = StepResult(name="Test", status=StepStatus.SUCCESS, issues=[])
         print_step_result(step)
         # Should not crash
@@ -168,9 +162,7 @@ class TestPrintIssuesTable:
     def test_with_issues(self, monkeypatch):
         buf = _capture(monkeypatch)
         issues = [
-            Issue(
-                file="a.py", line=10, type="error", message="bad", source_task="test"
-            ),
+            Issue(file="a.py", line=10, type="error", message="bad", source_task="test"),
         ]
         print_issues_table(issues)
         output = buf.getvalue()
@@ -180,9 +172,7 @@ class TestPrintIssuesTable:
     def test_null_line(self, monkeypatch):
         buf = _capture(monkeypatch)
         issues = [
-            Issue(
-                file="a.py", line=None, type="error", message="bad", source_task="test"
-            ),
+            Issue(file="a.py", line=None, type="error", message="bad", source_task="test"),
         ]
         print_issues_table(issues)
         output = buf.getvalue()
@@ -192,9 +182,7 @@ class TestPrintIssuesTable:
 class TestPrintRunSummary:
     def test_success(self, monkeypatch):
         buf = _capture(monkeypatch)
-        run = RunResult(
-            run_id="r1", started_at=100.0, finished_at=110.0, status=StepStatus.SUCCESS
-        )
+        run = RunResult(run_id="r1", started_at=100.0, finished_at=110.0, status=StepStatus.SUCCESS)
         print_run_summary(run)
         output = buf.getvalue()
         assert "Run Summary" in output
@@ -211,7 +199,7 @@ class TestPrintRunSummary:
         assert "1" in output  # Total issues count
 
     def test_no_issues(self, monkeypatch):
-        buf = _capture(monkeypatch)
+        _buf = _capture(monkeypatch)
         step = StepResult(name="Test", status=StepStatus.SUCCESS)
         run = RunResult(run_id="r1", started_at=100.0, status=StepStatus.SUCCESS)
         run.add_step(step)
@@ -238,14 +226,10 @@ class TestPrintDependencyGraph:
 
     def test_no_roots(self, monkeypatch):
         """All nodes are imported by something -> fallback to first node."""
-        buf = _capture(monkeypatch)
+        _buf = _capture(monkeypatch)
         graph = DependencyGraph()
-        graph.nodes["a"] = DependencyNode(
-            module="a", file="a.py", imports=["b"], imported_by=["b"]
-        )
-        graph.nodes["b"] = DependencyNode(
-            module="b", file="b.py", imports=["a"], imported_by=["a"]
-        )
+        graph.nodes["a"] = DependencyNode(module="a", file="a.py", imports=["b"], imported_by=["b"])
+        graph.nodes["b"] = DependencyNode(module="b", file="b.py", imports=["a"], imported_by=["a"])
         print_dependency_graph(graph)
         # Should not crash
 
@@ -259,7 +243,7 @@ class TestPrintDependencyGraph:
         assert "Circular" in output
 
     def test_max_depth(self, monkeypatch):
-        buf = _capture(monkeypatch)
+        _buf = _capture(monkeypatch)
         graph = DependencyGraph()
         graph.nodes["a"] = DependencyNode(module="a", file="a.py", imports=["b"])
         graph.nodes["b"] = DependencyNode(module="b", file="b.py", imports=["c"])
@@ -271,9 +255,7 @@ class TestPrintDependencyGraph:
         buf = _capture(monkeypatch)
         graph = DependencyGraph()
         imports = [f"mod{i}" for i in range(10)]
-        graph.nodes["root"] = DependencyNode(
-            module="root", file="root.py", imports=imports
-        )
+        graph.nodes["root"] = DependencyNode(module="root", file="root.py", imports=imports)
         for imp in imports:
             graph.nodes[imp] = DependencyNode(module=imp, file=f"{imp}.py")
         print_dependency_graph(graph)
@@ -281,7 +263,7 @@ class TestPrintDependencyGraph:
         assert "more" in output  # Shows "... and N more"
 
     def test_many_roots(self, monkeypatch):
-        buf = _capture(monkeypatch)
+        _buf = _capture(monkeypatch)
         graph = DependencyGraph()
         for i in range(5):
             graph.nodes[f"root{i}"] = DependencyNode(module=f"root{i}", file=f"r{i}.py")

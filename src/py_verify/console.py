@@ -1,11 +1,24 @@
 """Rich console output for py-verify."""
 
+import sys
+
 from rich.console import Console
 from rich.table import Table
 from rich.theme import Theme
 from rich.tree import Tree
 
 from py_verify.models import DependencyGraph, Issue, RunResult, StepResult, StepStatus
+
+# Use ASCII fallbacks on Windows when the console can't handle Unicode
+_UNICODE_SAFE = sys.platform != "win32" or sys.stdout.encoding in ("utf-8", "utf8")
+
+ICONS = {
+    "start": "\u25b6\ufe0f " if _UNICODE_SAFE else ">",
+    "success": "\u2713" if _UNICODE_SAFE else "+",
+    "failed": "\u2717" if _UNICODE_SAFE else "x",
+    "cached": "\u26a1" if _UNICODE_SAFE else "*",
+    "skipped": "\u2298" if _UNICODE_SAFE else "-",
+}
 
 
 def get_theme() -> Theme:
@@ -39,19 +52,20 @@ def print_banner() -> None:
 
 def print_step_start(name: str, description: str = "") -> None:
     """Print at the start of a step."""
+    icon = ICONS["start"]
     if description:
-        console.print(f"▶️  [bold]{name}[/bold] - {description}")
+        console.print(f"{icon} [bold]{name}[/bold] - {description}")
     else:
-        console.print(f"▶️  [bold]{name}[/bold]")
+        console.print(f"{icon} [bold]{name}[/bold]")
 
 
 def print_step_result(step: StepResult) -> None:
     """Print the result of a step."""
     icon = {
-        StepStatus.SUCCESS: "✓",
-        StepStatus.FAILED: "✗",
-        StepStatus.CACHED: "⚡",
-        StepStatus.SKIPPED: "⊘",
+        StepStatus.SUCCESS: ICONS["success"],
+        StepStatus.FAILED: ICONS["failed"],
+        StepStatus.CACHED: ICONS["cached"],
+        StepStatus.SKIPPED: ICONS["skipped"],
     }.get(step.status, "?")
 
     style = {
@@ -100,8 +114,7 @@ def print_run_summary(result: RunResult) -> None:
     console.print("[bold]=" * 50)
     console.print("[bold]Run Summary[/bold]")
     console.print(
-        f"Status: [bold {result.status.value}]"
-        f"{result.status.value}[/bold {result.status.value}]"
+        f"Status: [bold {result.status.value}]{result.status.value}[/bold {result.status.value}]"
     )
     console.print(f"Duration: {result.duration:.2f}s")
     console.print(f"Steps completed: {len(result.steps)}")
@@ -132,7 +145,7 @@ def print_dependency_graph(graph: DependencyGraph, max_depth: int = 3) -> None:
     for node in graph.nodes.values():
         all_imported.update(node.imported_by)
 
-    roots = [name for name in graph.nodes.keys() if name not in all_imported]
+    roots = [name for name in graph.nodes if name not in all_imported]
 
     if not roots:
         roots = list(graph.nodes.keys())[:1]

@@ -47,9 +47,8 @@ class VerifyRunner:
             paths = self.discovery.resolve_paths(self.config.paths)
             py_files = self.discovery.find_python_files(paths, scope="quality")
 
-            if not py_files and not self.config.skip_tests:
-                if not self.config.json_mode:
-                    console.print("[yellow]No Python files found[/yellow]")
+            if not py_files and not self.config.skip_tests and not self.config.json_mode:
+                console.print("[yellow]No Python files found[/yellow]")
 
             # Resolve tasks
             task_names = self._resolve_tasks()
@@ -144,20 +143,19 @@ class VerifyRunner:
         # Check if task is available
         if not task.is_available():
             if not self.config.json_mode:
-                console.print(
-                    f"[yellow]  Tool not available: {task.metadata.tool_name}[/yellow]"
-                )
+                console.print(f"[yellow]  Tool not available: {task.metadata.tool_name}[/yellow]")
             return
 
         # Check cache
-        if not self.config.no_cache and task.metadata.cache_scope:
-            if self.cache_manager.is_cached(task.metadata.cache_scope):
-                duration = (
-                    self.cache_manager.get_last_duration(task.metadata.cache_scope) or 0
-                )
-                if not self.config.json_mode:
-                    console.print(f"[cyan]  Cache hit ({duration:.2f}s)[/cyan]")
-                return
+        if (
+            not self.config.no_cache
+            and task.metadata.cache_scope
+            and self.cache_manager.is_cached(task.metadata.cache_scope)
+        ):
+            duration = self.cache_manager.get_last_duration(task.metadata.cache_scope) or 0
+            if not self.config.json_mode:
+                console.print(f"[cyan]  Cache hit ({duration:.2f}s)[/cyan]")
+            return
 
         # Execute task
         result = task.execute(paths)
@@ -170,15 +168,17 @@ class VerifyRunner:
         self.result.to_json_file(json_path)
 
         # Handle fast-fail mode
-        if result.status == StepStatus.FAILED:
-            if self.config.run_mode.value == "fast-fail":
-                self.result.mark_failed()
-                raise RuntimeError(f"Task {task_name} failed in fast-fail mode")
+        if result.status == StepStatus.FAILED and self.config.run_mode.value == "fast-fail":
+            self.result.mark_failed()
+            raise RuntimeError(f"Task {task_name} failed in fast-fail mode")
 
         # Mark cache if successful
-        if result.status in [StepStatus.SUCCESS, StepStatus.CACHED]:
-            if not self.config.no_cache and task.metadata.cache_scope:
-                self.cache_manager.mark_ok(task.metadata.cache_scope, result.duration)
+        if (
+            result.status in [StepStatus.SUCCESS, StepStatus.CACHED]
+            and not self.config.no_cache
+            and task.metadata.cache_scope
+        ):
+            self.cache_manager.mark_ok(task.metadata.cache_scope, result.duration)
 
     def _teardown(self) -> None:
         """Finalize verification run."""

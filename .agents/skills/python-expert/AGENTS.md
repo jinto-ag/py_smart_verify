@@ -52,11 +52,11 @@ print(add_item("b"))  # ['a', 'b'] - Unexpected!
 ```python
 def add_item(item: str, items: list[str] | None = None) -> list[str]:
     """Add an item to a list, creating a new list if none provided.
-    
+
     Args:
         item: The item to add
         items: Optional existing list to add to
-        
+
     Returns:
         The list with the new item added
     """
@@ -128,10 +128,10 @@ from typing import Optional, Dict, Any
 
 def get_user(user_id: int) -> Optional[Dict[str, Any]]:
     """Fetch user by ID.
-    
+
     Args:
         user_id: The unique identifier for the user
-        
+
     Returns:
         User dictionary if found, None otherwise
     """
@@ -160,10 +160,10 @@ class User:
         self.id = id
         self.name = name
         self.email = email
-    
+
     def __repr__(self):
         return f"User(id={self.id}, name={self.name}, email={self.email})"
-    
+
     def __eq__(self, other):
         return self.id == other.id and self.name == other.name
 ```
@@ -333,28 +333,28 @@ def process(data, config):
 
 ```python
 def process_user_data(
-    data: Dict[str, Any], 
+    data: Dict[str, Any],
     config: ProcessConfig
 ) -> ProcessResult:
     """Process user data according to the provided configuration.
-    
+
     Takes raw user data and applies transformations, validation,
     and enrichment based on the configuration settings.
-    
+
     Args:
         data: Raw user data as a dictionary containing at minimum
             'user_id' and 'email' keys.
         config: Processing configuration specifying transformations
             to apply and validation rules.
-            
+
     Returns:
         ProcessResult containing the transformed data and any
         validation warnings encountered.
-        
+
     Raises:
         ValidationError: If required fields are missing from data.
         ConfigError: If config contains invalid transformation rules.
-        
+
     Example:
         >>> config = ProcessConfig(normalize_email=True)
         >>> result = process_user_data({'user_id': 1, 'email': 'TEST@Example.com'}, config)

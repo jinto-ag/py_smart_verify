@@ -117,51 +117,37 @@ class TestVerifyParameterized:
 
     def test_min_severity_1(self, monkeypatch, e2e_project: Path):
         monkeypatch.setattr(Path, "cwd", lambda: e2e_project)
-        result = runner.invoke(
-            app, ["verify", "--min-severity", "1", "--no-cache", "self-test"]
-        )
+        result = runner.invoke(app, ["verify", "--min-severity", "1", "--no-cache", "self-test"])
         assert result.exit_code == 0
 
     def test_min_severity_3(self, monkeypatch, e2e_project: Path):
         monkeypatch.setattr(Path, "cwd", lambda: e2e_project)
-        result = runner.invoke(
-            app, ["verify", "--min-severity", "3", "--no-cache", "self-test"]
-        )
+        result = runner.invoke(app, ["verify", "--min-severity", "3", "--no-cache", "self-test"])
         assert result.exit_code == 0
 
     def test_min_severity_5(self, monkeypatch, e2e_project: Path):
         monkeypatch.setattr(Path, "cwd", lambda: e2e_project)
-        result = runner.invoke(
-            app, ["verify", "--min-severity", "5", "--no-cache", "self-test"]
-        )
+        result = runner.invoke(app, ["verify", "--min-severity", "5", "--no-cache", "self-test"])
         assert result.exit_code == 0
 
     def test_since_custom_ref(self, monkeypatch, e2e_project: Path):
         monkeypatch.setattr(Path, "cwd", lambda: e2e_project)
-        result = runner.invoke(
-            app, ["verify", "--since", "HEAD~1", "--no-cache", "self-test"]
-        )
+        result = runner.invoke(app, ["verify", "--since", "HEAD~1", "--no-cache", "self-test"])
         assert result.exit_code == 0
 
     def test_paths_option(self, monkeypatch, e2e_project: Path):
         monkeypatch.setattr(Path, "cwd", lambda: e2e_project)
-        result = runner.invoke(
-            app, ["verify", "--paths", "src", "--no-cache", "self-test"]
-        )
+        result = runner.invoke(app, ["verify", "--paths", "src", "--no-cache", "self-test"])
         assert result.exit_code == 0
 
     def test_paths_multiple(self, monkeypatch, e2e_project: Path):
         monkeypatch.setattr(Path, "cwd", lambda: e2e_project)
-        result = runner.invoke(
-            app, ["verify", "--paths", "src,tests", "--no-cache", "self-test"]
-        )
+        result = runner.invoke(app, ["verify", "--paths", "src,tests", "--no-cache", "self-test"])
         assert result.exit_code == 0
 
     def test_tools_filter(self, monkeypatch, e2e_project: Path):
         monkeypatch.setattr(Path, "cwd", lambda: e2e_project)
-        result = runner.invoke(
-            app, ["verify", "--tools", "python", "--no-cache", "self-test"]
-        )
+        result = runner.invoke(app, ["verify", "--tools", "python", "--no-cache", "self-test"])
         assert result.exit_code == 0
 
 
@@ -170,35 +156,27 @@ class TestVerifyFlagCombinations:
 
     def test_json_and_verbose(self, monkeypatch, e2e_project: Path):
         monkeypatch.setattr(Path, "cwd", lambda: e2e_project)
-        result = runner.invoke(
-            app, ["verify", "--json", "-v", "--no-cache", "self-test"]
-        )
+        result = runner.invoke(app, ["verify", "--json", "-v", "--no-cache", "self-test"])
         assert result.exit_code == 0
         data = json.loads(result.output)
         assert data["status"] == "success"
 
     def test_json_and_continue(self, monkeypatch, e2e_project: Path):
         monkeypatch.setattr(Path, "cwd", lambda: e2e_project)
-        result = runner.invoke(
-            app, ["verify", "--json", "--continue", "--no-cache", "self-test"]
-        )
+        result = runner.invoke(app, ["verify", "--json", "--continue", "--no-cache", "self-test"])
         assert result.exit_code == 0
         data = json.loads(result.output)
         assert "steps" in data
 
     def test_json_and_skip_tests(self, monkeypatch, e2e_project: Path):
         monkeypatch.setattr(Path, "cwd", lambda: e2e_project)
-        result = runner.invoke(
-            app, ["verify", "--json", "--skip-tests", "--no-cache", "self-test"]
-        )
+        result = runner.invoke(app, ["verify", "--json", "--skip-tests", "--no-cache", "self-test"])
         assert result.exit_code == 0
         json.loads(result.output)  # valid JSON
 
     def test_continue_verbose_no_cache(self, monkeypatch, e2e_project: Path):
         monkeypatch.setattr(Path, "cwd", lambda: e2e_project)
-        result = runner.invoke(
-            app, ["verify", "--continue", "-v", "--no-cache", "self-test"]
-        )
+        result = runner.invoke(app, ["verify", "--continue", "-v", "--no-cache", "self-test"])
         assert result.exit_code == 0
 
     def test_staged_since_combination(self, monkeypatch, e2e_project: Path):
@@ -222,11 +200,14 @@ class TestVerifyFlagCombinations:
                 "--skip-tests",
                 "--include-tests",
                 "--ignore-warnings",
-                "--min-severity", "1",
-                "--since", "HEAD",
+                "--min-severity",
+                "1",
+                "--since",
+                "HEAD",
                 "--staged",
                 "--full-tests",
-                "--paths", "src",
+                "--paths",
+                "src",
                 "self-test",
             ],
         )
@@ -303,9 +284,7 @@ class TestVerifyTasks:
 
     def test_multiple_tasks(self, monkeypatch, e2e_project: Path):
         monkeypatch.setattr(Path, "cwd", lambda: e2e_project)
-        result = runner.invoke(
-            app, ["verify", "--no-cache", "self-test", "circular-deps"]
-        )
+        result = runner.invoke(app, ["verify", "--no-cache", "self-test", "circular-deps"])
         assert result.exit_code == 0
 
     def test_multiple_tasks_json(self, monkeypatch, e2e_project: Path):
@@ -410,9 +389,7 @@ class TestGraphCommand:
         """graph --output --paths combined."""
         monkeypatch.setattr(Path, "cwd", lambda: e2e_project)
         out_file = e2e_project / "graph2.json"
-        result = runner.invoke(
-            app, ["graph", "--output", str(out_file), "--paths", "src"]
-        )
+        result = runner.invoke(app, ["graph", "--output", str(out_file), "--paths", "src"])
         assert result.exit_code == 0
         assert out_file.exists()
 
@@ -450,9 +427,7 @@ class TestAffectedCommand:
 
         def mock_run(cmd, **kwargs):
             captured.append(cmd)
-            return subprocess.CompletedProcess(
-                cmd, 0, stdout='{"affected": []}', stderr=""
-            )
+            return subprocess.CompletedProcess(cmd, 0, stdout='{"affected": []}', stderr="")
 
         monkeypatch.setattr(subprocess, "run", mock_run)
         result = runner.invoke(app, ["affected", "--json"])
@@ -492,14 +467,10 @@ class TestAffectedCommand:
 
         def mock_run(cmd, **kwargs):
             captured.append(cmd)
-            return subprocess.CompletedProcess(
-                cmd, 0, stdout='{"affected": []}', stderr=""
-            )
+            return subprocess.CompletedProcess(cmd, 0, stdout='{"affected": []}', stderr="")
 
         monkeypatch.setattr(subprocess, "run", mock_run)
-        result = runner.invoke(
-            app, ["affected", "--json", "--since", "develop", "--staged"]
-        )
+        result = runner.invoke(app, ["affected", "--json", "--since", "develop", "--staged"])
         assert result.exit_code == 0
         cmd = captured[0]
         assert "--json" in cmd
