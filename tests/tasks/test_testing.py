@@ -90,6 +90,18 @@ class TestSmartTestTask:
         issues = task._parse_pytest_output(output)
         assert len(issues) == 5
 
+    def test_no_tests_collected_exit_5(self, task_config, monkeypatch):
+        """Exit code 5 (no tests collected) should be treated as success."""
+
+        def mock_run(cmd, **kwargs):
+            return subprocess.CompletedProcess(cmd, 5, stdout="no tests ran\n", stderr="")
+
+        monkeypatch.setattr(subprocess, "run", mock_run)
+        task = SmartTestTask(task_config)
+        result = task.execute([])
+        assert result.status == StepStatus.SUCCESS
+        assert result.issues == []
+
 
 # --- FullTestTask ---
 
@@ -148,6 +160,18 @@ class TestFullTestTask:
         task = FullTestTask(task_config)
         task.execute([])
         assert "--smart-staged" in captured[0]
+
+    def test_no_tests_collected_exit_5(self, task_config, monkeypatch):
+        """Exit code 5 (no tests collected) should be treated as success."""
+
+        def mock_run(cmd, **kwargs):
+            return subprocess.CompletedProcess(cmd, 5, stdout="no tests ran\n", stderr="")
+
+        monkeypatch.setattr(subprocess, "run", mock_run)
+        task = FullTestTask(task_config)
+        result = task.execute([])
+        assert result.status == StepStatus.SUCCESS
+        assert result.issues == []
 
 
 # --- E2ETestTask ---
@@ -215,6 +239,18 @@ class TestE2ETestTask:
         issues = task._parse_pytest_output(output)
         assert len(issues) == 2
 
+    def test_no_tests_collected_exit_5(self, task_config, monkeypatch):
+        """Exit code 5 (no tests collected) should be treated as success."""
+
+        def mock_run(cmd, **kwargs):
+            return subprocess.CompletedProcess(cmd, 5, stdout="no tests ran\n", stderr="")
+
+        monkeypatch.setattr(subprocess, "run", mock_run)
+        task = E2ETestTask(task_config)
+        result = task.execute([])
+        assert result.status == StepStatus.SUCCESS
+        assert result.issues == []
+
 
 # --- FullE2ETestTask ---
 
@@ -280,6 +316,18 @@ class TestFullE2ETestTask:
         output = "FAILED test_x\nFAILED test_y\n5 passed"
         issues = task._parse_pytest_output(output)
         assert len(issues) == 2
+
+    def test_no_tests_collected_exit_5(self, task_config, monkeypatch):
+        """Exit code 5 (no tests collected) should be treated as success."""
+
+        def mock_run(cmd, **kwargs):
+            return subprocess.CompletedProcess(cmd, 5, stdout="no tests ran\n", stderr="")
+
+        monkeypatch.setattr(subprocess, "run", mock_run)
+        task = FullE2ETestTask(task_config)
+        result = task.execute([])
+        assert result.status == StepStatus.SUCCESS
+        assert result.issues == []
 
 
 # --- RegenerateGraphTask ---

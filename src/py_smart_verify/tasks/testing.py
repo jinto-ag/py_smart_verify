@@ -49,8 +49,9 @@ class SmartTestTask(BaseTask):
 
             exit_code, output = self._run_subprocess(cmd, log_path, allow_failure=False)
 
-            status = StepStatus.SUCCESS if exit_code == 0 else StepStatus.FAILED
-            issues = self._parse_pytest_output(output)
+            # Exit code 5 = no tests collected (e.g. --smart-staged with no staged changes)
+            status = StepStatus.SUCCESS if exit_code in (0, 5) else StepStatus.FAILED
+            issues = self._parse_pytest_output(output) if exit_code not in (0, 5) else []
 
             return self._build_result(
                 status=status,
@@ -121,8 +122,9 @@ class FullTestTask(BaseTask):
 
             exit_code, output = self._run_subprocess(cmd, log_path, allow_failure=False)
 
-            status = StepStatus.SUCCESS if exit_code == 0 else StepStatus.FAILED
-            issues = self._parse_pytest_output(output)
+            # Exit code 5 = no tests collected
+            status = StepStatus.SUCCESS if exit_code in (0, 5) else StepStatus.FAILED
+            issues = self._parse_pytest_output(output) if exit_code not in (0, 5) else []
 
             return self._build_result(
                 status=status,
@@ -191,8 +193,9 @@ class E2ETestTask(BaseTask):
 
             exit_code, output = self._run_subprocess(cmd, log_path, allow_failure=False)
 
-            status = StepStatus.SUCCESS if exit_code == 0 else StepStatus.FAILED
-            issues = self._parse_pytest_output(output)
+            # Exit code 5 = no tests collected
+            status = StepStatus.SUCCESS if exit_code in (0, 5) else StepStatus.FAILED
+            issues = self._parse_pytest_output(output) if exit_code not in (0, 5) else []
 
             return self._build_result(
                 status=status,
@@ -260,8 +263,9 @@ class FullE2ETestTask(BaseTask):
 
             exit_code, output = self._run_subprocess(cmd, log_path, allow_failure=False)
 
-            status = StepStatus.SUCCESS if exit_code == 0 else StepStatus.FAILED
-            issues = self._parse_pytest_output(output)
+            # Exit code 5 = no tests collected
+            status = StepStatus.SUCCESS if exit_code in (0, 5) else StepStatus.FAILED
+            issues = self._parse_pytest_output(output) if exit_code not in (0, 5) else []
 
             return self._build_result(
                 status=status,
