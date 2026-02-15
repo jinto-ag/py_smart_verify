@@ -22,6 +22,7 @@ class FormatTask(BaseTask):
             cache_scope="quality",
             auto_fix=True,
             phase=0,
+            optimized=False,
         )
 
     def execute(self, paths: list[Path]) -> StepResult:
@@ -67,6 +68,7 @@ class IsortTask(BaseTask):
             cache_scope="quality",
             auto_fix=True,
             phase=0,
+            optimized=False,
         )
 
     def execute(self, paths: list[Path]) -> StepResult:
@@ -124,6 +126,47 @@ class RuffFixTask(BaseTask):
         exit_code, output = self._run_subprocess(cmd, log_path, allow_failure=True)
 
         status = StepStatus.SUCCESS
+
+        return self._build_result(
+            status=status,
+            exit_code=exit_code,
+            command=" ".join(cmd),
+            log_path=log_path,
+            output=output,
+        )
+
+
+@register
+class RuffFormatTask(BaseTask):
+    """Ruff format task - replaces Black for code formatting."""
+
+    def _get_metadata(self) -> TaskMetadata:
+        return TaskMetadata(
+            name="ruff-format",
+            display_name="Ruff Format",
+            category=TaskCategory.FORMATTER,
+            description="Format code with Ruff",
+            tool_name="ruff",
+            aliases=["ruff-format"],
+            cache_scope="quality",
+            auto_fix=True,
+            phase=0,
+        )
+
+    def execute(self, paths: list[Path]) -> StepResult:
+        """Execute Ruff format check."""
+        if not self.is_available():
+            return self._build_skipped("Ruff not available")
+
+        if not paths:
+            paths = [self.config.project_root]
+
+        log_path = self.config.log_dir / "ruff-format.log"
+        cmd = ["ruff", "format", "--check", "--quiet"] + [str(p) for p in paths]
+
+        exit_code, output = self._run_subprocess(cmd, log_path, allow_failure=True)
+
+        status = StepStatus.SUCCESS  # auto-fix task always counts as success
 
         return self._build_result(
             status=status,

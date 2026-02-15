@@ -7,7 +7,7 @@ import pytest
 
 from py_smart_verify.models import StepStatus
 from py_smart_verify.tasks.base import TaskCategory
-from py_smart_verify.tasks.linters import Flake8Task, PyflakesTask
+from py_smart_verify.tasks.linters import Flake8Task, PyflakesTask, RuffLintTask
 
 
 class TestFlake8Task:
@@ -15,6 +15,7 @@ class TestFlake8Task:
         task = Flake8Task(task_config)
         assert task.metadata.name == "flake8"
         assert task.metadata.category == TaskCategory.LINTER
+        assert task.metadata.optimized is False
 
     def test_not_available(self, task_config, monkeypatch):
         monkeypatch.setattr(shutil, "which", lambda tool: None)
@@ -91,6 +92,7 @@ class TestPyflakesTask:
         task = PyflakesTask(task_config)
         assert task.metadata.name == "pyflakes"
         assert task.metadata.category == TaskCategory.LINTER
+        assert task.metadata.optimized is False
 
     def test_not_available(self, task_config, monkeypatch):
         monkeypatch.setattr(shutil, "which", lambda tool: None)
@@ -157,3 +159,81 @@ class TestPyflakesEmptyPaths:
         task = PyflakesTask(task_config)
         task.execute([])
         assert str(task_config.project_root) in captured_cmds[0]
+
+
+class TestRuffLintTask:
+    def test_metadata(self, task_config):
+        task = RuffLintTask(task_config)
+        assert task.metadata.name == "ruff-lint"
+        assert task.metadata.category == TaskCategory.LINTER
+        assert task.metadata.tool_name == "ruff"
+        assert task.metadata.optimized is True
+
+    def test_not_available(self, task_config, monkeypatch):
+        monkeypatch.setattr(shutil, "which", lambda tool: None)
+        task = RuffLintTask(task_config)
+        result = task.execute([])
+        assert result.status == StepStatus.SKIPPED
+
+    def test_success(self, task_config, task_paths, monkeypatch):
+        monkeypatch.setattr(shutil, "which", lambda tool: "/usr/bin/" + tool)
+
+        def mock_run(cmd, **kwargs):
+            return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+
+        monkeypatch.setattr(subprocess, "run", mock_run)
+        task = RuffLintTask(task_config)
+        result = task.execute(task_paths)
+        assert result.status == StepStatus.SUCCESS
+        assert result.issues == []
+
+    def test_failure_with_issues(self, task_config, task_paths, monkeypatch):
+        monkeypatch.setattr(shutil, "which", lambda tool: "/usr/bin/" + tool)
+
+        def mock_run(cmd, **kwargs):
+            return subprocess.CompletedProcess(
+                cmd,
+                1,
+                stdout="a.py:10:5: E501 line too long\nb.py:3:1: W503 bad\n",
+                stderr="",
+            )
+
+        monkeypatch.setattr(subprocess, "run", mock_run)
+        task = RuffLintTask(task_config)
+        result = task.execute(task_paths)
+        assert result.status == StepStatus.FAILED
+        assert len(result.issues) == 2
+
+    def test_empty_paths(self, task_config, monkeypatch):
+        monkeypatch.setattr(shutil, "which", lambda tool: "/usr/bin/" + tool)
+
+        def mock_run(cmd, **kwargs):
+            return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+
+        monkeypatch.setattr(subprocess, "run", mock_run)
+        task = RuffLintTask(task_config)
+        result = task.execute([])
+        assert result.status == StepStatus.SUCCESS
+
+
+class TestRuffLintParse:
+    @pytest.mark.parametrize(
+        "output, expected_count",
+        [
+            ("a.py:10:5: E501 line too long", 1),
+            ("a.py:10:5: E501 msg1\nb.py:3:1: W503 msg2", 2),
+            ("", 0),
+            ("\n\n", 0),
+            ("invalid line without colons", 0),
+        ],
+    )
+    def test_parse_ruff_output(self, task_config, output, expected_count):
+        task = RuffLintTask(task_config)
+        issues = task._parse_ruff_output(output)
+        assert len(issues) == expected_count
+
+    def test_parse_value_error(self, task_config):
+        task = RuffLintTask(task_config)
+        # Line with non-numeric line/col numbers
+        issues = task._parse_ruff_output("a.py:abc:def: E501 msg")
+        assert issues == []

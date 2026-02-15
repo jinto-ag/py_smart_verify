@@ -7,7 +7,7 @@ from typer.testing import CliRunner
 
 import py_smart_verify.cli
 from py_smart_verify.cli import _build_verify_config, app
-from py_smart_verify.config import RunMode, Severity
+from py_smart_verify.config import RunMode, Severity, ToolProfile
 from py_smart_verify.models import RunResult, StepStatus
 
 runner = CliRunner()
@@ -69,6 +69,12 @@ class TestVerifyCommand:
         monkeypatch.setattr(Path, "cwd", lambda: tmp_path)
         result = runner.invoke(app, ["verify", "quality"])
         assert result.exit_code == 1
+
+    def test_full_flag(self, monkeypatch, tmp_path: Path):
+        monkeypatch.setattr(py_smart_verify.cli, "VerifyRunner", _make_mock_runner(0))
+        monkeypatch.setattr(Path, "cwd", lambda: tmp_path)
+        result = runner.invoke(app, ["verify", "--full", "quality"])
+        assert result.exit_code == 0
 
 
 class TestBuildVerifyConfig:
@@ -215,6 +221,46 @@ class TestBuildVerifyConfig:
         assert config.full_tests is True
         assert config.since == "develop"
         assert config.staged is True
+
+    def test_full_flag_sets_profile(self):
+        config = _build_verify_config(
+            tasks=None,
+            tools=None,
+            paths=None,
+            skip_tests=False,
+            no_cache=False,
+            include_tests=False,
+            ignore_warnings=False,
+            min_severity=5,
+            continue_mode=False,
+            verbose=False,
+            upgrade_deps=False,
+            full_tests=False,
+            since="main",
+            staged=False,
+            full=True,
+        )
+        assert config.tool_profile == ToolProfile.FULL
+
+    def test_no_full_flag_uses_optimized(self):
+        config = _build_verify_config(
+            tasks=None,
+            tools=None,
+            paths=None,
+            skip_tests=False,
+            no_cache=False,
+            include_tests=False,
+            ignore_warnings=False,
+            min_severity=5,
+            continue_mode=False,
+            verbose=False,
+            upgrade_deps=False,
+            full_tests=False,
+            since="main",
+            staged=False,
+            full=False,
+        )
+        assert config.tool_profile == ToolProfile.OPTIMIZED
 
 
 class TestGraphCommand:

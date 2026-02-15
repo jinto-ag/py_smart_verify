@@ -1,7 +1,6 @@
 """Tests for py_smart_verify.tasks.analyzers."""
 
 import ast
-import shutil
 from pathlib import Path
 
 from py_smart_verify.models import StepStatus
@@ -26,17 +25,34 @@ class TestDeprecationsTask:
         assert task.metadata.name == "deprecations"
         assert task.metadata.category == TaskCategory.ANALYZER
 
-    def test_not_available(self, task_config, monkeypatch):
-        monkeypatch.setattr(shutil, "which", lambda tool: None)
+    def test_always_available(self, task_config):
+        """DeprecationsTask uses AST analysis (tool_name='python'), always available."""
         task = DeprecationsTask(task_config)
-        result = task.execute([])
-        assert result.status == StepStatus.SKIPPED
+        assert task.is_available()
 
-    def test_available_returns_success(self, task_config, monkeypatch):
-        monkeypatch.setattr(shutil, "which", lambda tool: "/usr/bin/" + tool)
+    def test_empty_paths_returns_success(self, task_config):
         task = DeprecationsTask(task_config)
         result = task.execute([])
         assert result.status == StepStatus.SUCCESS
+
+    def test_detects_deprecated_decorator(self, task_config, tmp_path: Path):
+        f = tmp_path / "mod.py"
+        f.write_text(
+            "from typing_extensions import deprecated\n\n@deprecated\ndef old_func():\n    pass\n"
+        )
+        task = DeprecationsTask(task_config)
+        result = task.execute([f])
+        assert result.status == StepStatus.FAILED
+        assert len(result.issues) == 1
+        assert "deprecated" in result.issues[0].message
+
+    def test_clean_file_no_deprecations(self, task_config, tmp_path: Path):
+        f = tmp_path / "clean.py"
+        f.write_text("def foo():\n    pass\n")
+        task = DeprecationsTask(task_config)
+        result = task.execute([f])
+        assert result.status == StepStatus.SUCCESS
+        assert result.issues == []
 
 
 # --- CircularDepsTask ---

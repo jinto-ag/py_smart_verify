@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 import typer
 
 from py_smart_verify import __app_name__, __version__
-from py_smart_verify.config import RunMode, Severity, VerifyConfig
+from py_smart_verify.config import RunMode, Severity, ToolProfile, VerifyConfig
 from py_smart_verify.console import console
 from py_smart_verify.runner import VerifyRunner
 
@@ -57,6 +57,7 @@ def verify(
         False, "--staged", help="Test only staged changes (pre-commit mode)"
     ),
     json_output: bool = typer.Option(False, "--json", help="Output JSON to stdout (for AI agents)"),
+    full: bool = typer.Option(False, "--full", help="Run all tools instead of optimized selection"),
     version: bool = typer.Option(None, "--version", help="Show version"),
 ) -> None:
     """Run verification checks on Python code."""
@@ -80,6 +81,7 @@ def verify(
         since,
         staged,
         json_mode=json_output,
+        full=full,
     )
 
     runner = VerifyRunner(config)
@@ -108,6 +110,7 @@ def _build_verify_config(
     since: str,
     staged: bool,
     json_mode: bool = False,
+    full: bool = False,
 ) -> VerifyConfig:
     """Build VerifyConfig from CLI arguments.
 
@@ -127,6 +130,7 @@ def _build_verify_config(
         since: Git ref for comparison.
         staged: Whether to use staged changes only.
         json_mode: Whether to output JSON to stdout.
+        full: Whether to run all tools (vs optimized).
 
     Returns:
         Configured VerifyConfig instance.
@@ -147,6 +151,7 @@ def _build_verify_config(
         full_tests=full_tests,
         since=since,
         staged=staged,
+        tool_profile=ToolProfile.FULL if full else ToolProfile.OPTIMIZED,
         project_root=Path.cwd(),
     )
 

@@ -22,6 +22,7 @@ class Flake8Task(BaseTask):
             aliases=["flake8"],
             cache_scope="quality",
             phase=1,
+            optimized=False,
         )
 
     def execute(self, paths: list[Path]) -> StepResult:
@@ -86,6 +87,7 @@ class PyflakesTask(BaseTask):
             aliases=["pyflakes"],
             cache_scope="quality",
             phase=1,
+            optimized=False,
         )
 
     def execute(self, paths: list[Path]) -> StepResult:
@@ -131,6 +133,70 @@ class PyflakesTask(BaseTask):
                             type="warning",
                             message=parts[2].strip(),
                             source_task="pyflakes",
+                        )
+                    )
+        return issues
+
+
+@register
+class RuffLintTask(BaseTask):
+    """Ruff lint task - replaces Flake8 and Pyflakes."""
+
+    def _get_metadata(self) -> TaskMetadata:
+        return TaskMetadata(
+            name="ruff-lint",
+            display_name="Ruff Lint",
+            category=TaskCategory.LINTER,
+            description="Lint with Ruff",
+            tool_name="ruff",
+            aliases=["ruff-lint"],
+            cache_scope="quality",
+            phase=1,
+        )
+
+    def execute(self, paths: list[Path]) -> StepResult:
+        """Execute Ruff lint."""
+        if not self.is_available():
+            return self._build_skipped("Ruff not available")
+
+        if not paths:
+            paths = [self.config.project_root]
+
+        log_path = self.config.log_dir / "ruff-lint.log"
+        cmd = ["ruff", "check", "--quiet"] + [str(p) for p in paths]
+
+        exit_code, output = self._run_subprocess(cmd, log_path, allow_failure=False)
+
+        issues = self._parse_ruff_output(output)
+        status = StepStatus.SUCCESS if exit_code == 0 else StepStatus.FAILED
+
+        return self._build_result(
+            status=status,
+            exit_code=exit_code,
+            command=" ".join(cmd),
+            log_path=log_path,
+            output=output,
+            issues=issues,
+        )
+
+    def _parse_ruff_output(self, output: str) -> list[Issue]:
+        """Parse Ruff output into Issues."""
+        issues = []
+        for line in output.strip().split("\n"):
+            if not line:
+                continue
+            # ruff format: file.py:line:col: code message
+            parts = line.split(":", 3)
+            if len(parts) >= 4:
+                with contextlib.suppress(ValueError):
+                    issues.append(
+                        Issue(
+                            file=parts[0],
+                            line=int(parts[1]),
+                            col=int(parts[2]),
+                            type="error",
+                            message=parts[3].strip(),
+                            source_task="ruff-lint",
                         )
                     )
         return issues

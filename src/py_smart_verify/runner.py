@@ -5,7 +5,7 @@ from datetime import datetime
 from pathlib import Path
 
 from py_smart_verify.cache import CacheManager
-from py_smart_verify.config import VerifyConfig
+from py_smart_verify.config import ToolProfile, VerifyConfig
 from py_smart_verify.console import (
     console,
     print_banner,
@@ -112,7 +112,8 @@ class VerifyRunner:
                 # Expand quality composite
                 try:
                     quality_task = QualityCompositeTask(VerifyConfig())
-                    resolved.extend(quality_task.get_subtasks())
+                    optimized_only = self.config.tool_profile == ToolProfile.OPTIMIZED
+                    resolved.extend(quality_task.get_subtasks(optimized_only=optimized_only))
                 except Exception:
                     resolved.append(name)
             elif name == "tests":

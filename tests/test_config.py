@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from py_smart_verify.config import RunMode, Severity, VerifyConfig
+from py_smart_verify.config import RunMode, Severity, ToolProfile, VerifyConfig
 
 # --- Severity enum ---
 
@@ -46,6 +46,7 @@ def test_config_defaults():
     assert config.staged is False
     assert config.verbose is False
     assert config.upgrade_deps is False
+    assert config.tool_profile == ToolProfile.OPTIMIZED
 
 
 def test_config_custom_values(tmp_path: Path):
@@ -91,3 +92,18 @@ def test_config_default_paths():
     assert isinstance(config.project_root, Path)
     assert isinstance(config.cache_dir, Path)
     assert isinstance(config.log_dir, Path)
+
+
+def test_tool_profile_values():
+    assert ToolProfile.OPTIMIZED == "optimized"
+    assert ToolProfile.FULL == "full"
+
+
+def test_config_default_tool_profile():
+    config = VerifyConfig()
+    assert config.tool_profile == ToolProfile.OPTIMIZED
+
+
+def test_config_full_tool_profile():
+    config = VerifyConfig(tool_profile=ToolProfile.FULL)
+    assert config.tool_profile == ToolProfile.FULL

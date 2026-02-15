@@ -4,7 +4,7 @@ from pathlib import Path
 
 import py_smart_verify.console
 import py_smart_verify.runner
-from py_smart_verify.config import RunMode, VerifyConfig
+from py_smart_verify.config import RunMode, ToolProfile, VerifyConfig
 from py_smart_verify.models import StepResult, StepStatus
 from py_smart_verify.runner import VerifyRunner
 from py_smart_verify.tasks.base import BaseTask, TaskCategory, TaskMetadata
@@ -123,6 +123,28 @@ class TestResolveTasks:
         tasks = runner._resolve_tasks()
         assert "full-tests" in tasks
         assert "full-e2e-tests" in tasks
+
+    def test_quality_optimized_profile(self, tmp_path: Path):
+        config = _make_config(tmp_path, tasks=["quality"], tool_profile=ToolProfile.OPTIMIZED)
+        runner = VerifyRunner(config)
+        tasks = runner._resolve_tasks()
+        # Optimized profile should exclude non-optimized tools
+        assert "format" not in tasks
+        assert "isort" not in tasks
+        assert "flake8" not in tasks
+        assert "pyflakes" not in tasks
+        # Should include ruff tasks
+        assert "ruff-fix" in tasks
+        assert "ruff-lint" in tasks
+
+    def test_quality_full_profile(self, tmp_path: Path):
+        config = _make_config(tmp_path, tasks=["quality"], tool_profile=ToolProfile.FULL)
+        runner = VerifyRunner(config)
+        tasks = runner._resolve_tasks()
+        # Full profile should include all tools
+        assert "format" in tasks
+        assert "isort" in tasks
+        assert "ruff-fix" in tasks
 
 
 class TestExecuteTask:

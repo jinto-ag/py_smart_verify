@@ -5,7 +5,7 @@ import subprocess
 
 from py_smart_verify.models import StepStatus
 from py_smart_verify.tasks.base import TaskCategory
-from py_smart_verify.tasks.formatters import FormatTask, IsortTask, RuffFixTask
+from py_smart_verify.tasks.formatters import FormatTask, IsortTask, RuffFixTask, RuffFormatTask
 
 
 class TestFormatTask:
@@ -15,6 +15,7 @@ class TestFormatTask:
         assert task.metadata.category == TaskCategory.FORMATTER
         assert task.metadata.auto_fix is True
         assert task.metadata.tool_name == "black"
+        assert task.metadata.optimized is False
 
     def test_not_available(self, task_config, monkeypatch):
         monkeypatch.setattr(shutil, "which", lambda tool: None)
@@ -64,6 +65,7 @@ class TestIsortTask:
         task = IsortTask(task_config)
         assert task.metadata.name == "isort"
         assert task.metadata.auto_fix is True
+        assert task.metadata.optimized is False
 
     def test_not_available(self, task_config, monkeypatch):
         monkeypatch.setattr(shutil, "which", lambda tool: None)
@@ -112,6 +114,7 @@ class TestRuffFixTask:
         task = RuffFixTask(task_config)
         assert task.metadata.name == "ruff-fix"
         assert task.metadata.auto_fix is True
+        assert task.metadata.optimized is True
 
     def test_not_available(self, task_config, monkeypatch):
         monkeypatch.setattr(shutil, "which", lambda tool: None)
@@ -151,5 +154,55 @@ class TestRuffFixTask:
 
         monkeypatch.setattr(subprocess, "run", mock_run)
         task = RuffFixTask(task_config)
+        task.execute([])
+        assert str(task_config.project_root) in captured_cmds[0]
+
+
+class TestRuffFormatTask:
+    def test_metadata(self, task_config):
+        task = RuffFormatTask(task_config)
+        assert task.metadata.name == "ruff-format"
+        assert task.metadata.auto_fix is True
+        assert task.metadata.tool_name == "ruff"
+        assert task.metadata.optimized is True
+
+    def test_not_available(self, task_config, monkeypatch):
+        monkeypatch.setattr(shutil, "which", lambda tool: None)
+        task = RuffFormatTask(task_config)
+        result = task.execute([])
+        assert result.status == StepStatus.SKIPPED
+
+    def test_success(self, task_config, task_paths, monkeypatch):
+        monkeypatch.setattr(shutil, "which", lambda tool: "/usr/bin/" + tool)
+
+        def mock_run(cmd, **kwargs):
+            return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+
+        monkeypatch.setattr(subprocess, "run", mock_run)
+        task = RuffFormatTask(task_config)
+        result = task.execute(task_paths)
+        assert result.status == StepStatus.SUCCESS
+
+    def test_nonzero_still_success(self, task_config, task_paths, monkeypatch):
+        monkeypatch.setattr(shutil, "which", lambda tool: "/usr/bin/" + tool)
+
+        def mock_run(cmd, **kwargs):
+            return subprocess.CompletedProcess(cmd, 1, stdout="reformatted\n", stderr="")
+
+        monkeypatch.setattr(subprocess, "run", mock_run)
+        task = RuffFormatTask(task_config)
+        result = task.execute(task_paths)
+        assert result.status == StepStatus.SUCCESS
+
+    def test_empty_paths_uses_project_root(self, task_config, monkeypatch):
+        monkeypatch.setattr(shutil, "which", lambda tool: "/usr/bin/" + tool)
+        captured_cmds = []
+
+        def mock_run(cmd, **kwargs):
+            captured_cmds.append(cmd)
+            return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+
+        monkeypatch.setattr(subprocess, "run", mock_run)
+        task = RuffFormatTask(task_config)
         task.execute([])
         assert str(task_config.project_root) in captured_cmds[0]

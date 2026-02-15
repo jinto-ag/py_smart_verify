@@ -82,3 +82,45 @@ class TestQualityCompositeTask:
         subtasks = task.get_subtasks()
         # All broken → no subtasks
         assert subtasks == []
+
+    def test_get_subtasks_optimized_only(self, task_config):
+        task = QualityCompositeTask(task_config)
+        subtasks = task.get_subtasks(optimized_only=True)
+        # Only optimized tasks should be included
+        assert len(subtasks) > 0
+        # Non-optimized tools (black, isort, flake8, pyflakes) should be excluded
+        assert "format" not in subtasks
+        assert "isort" not in subtasks
+        assert "flake8" not in subtasks
+        assert "pyflakes" not in subtasks
+
+    def test_get_subtasks_optimized_excludes_redundant(self, task_config):
+        task = QualityCompositeTask(task_config)
+        optimized = task.get_subtasks(optimized_only=True)
+        full = task.get_subtasks(optimized_only=False)
+        # Optimized should be a subset of full
+        assert len(optimized) <= len(full)
+        for name in optimized:
+            assert name in full
+
+    def test_get_subtasks_optimized_includes_ruff(self, task_config):
+        task = QualityCompositeTask(task_config)
+        subtasks = task.get_subtasks(optimized_only=True)
+        # Ruff tasks should be in the optimized set
+        assert "ruff-fix" in subtasks
+        assert "ruff-lint" in subtasks
+
+    def test_get_subtasks_full_includes_all(self, task_config):
+        task = QualityCompositeTask(task_config)
+        subtasks = task.get_subtasks(optimized_only=False)
+        # Full should include both optimized and non-optimized tasks
+        assert "format" in subtasks
+        assert "isort" in subtasks
+        assert "ruff-fix" in subtasks
+
+    def test_get_subtasks_backward_compatible(self, task_config):
+        task = QualityCompositeTask(task_config)
+        # Default call (no args) should return all subtasks
+        default = task.get_subtasks()
+        full = task.get_subtasks(optimized_only=False)
+        assert default == full

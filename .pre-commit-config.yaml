@@ -1,5 +1,5 @@
 repos:
-  # Code formatting and linting
+  # Generic file checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
@@ -14,59 +14,14 @@ repos:
       - id: mixed-line-ending
         args: ["--fix=lf"]
 
-  - repo: https://github.com/pycqa/isort
-    rev: 7.0.0
-    hooks:
-      - id: isort
-
-  - repo: https://github.com/psf/black
-    rev: 26.1.0
-    hooks:
-      - id: black
-
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.1
-    hooks:
-      - id: ruff
-        args: [--fix]
-      - id: ruff-format
-
-  - repo: https://github.com/pycqa/flake8
-    rev: 7.3.0
-    hooks:
-      - id: flake8
-
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.19.1
-    hooks:
-      - id: mypy
-        additional_dependencies:
-          - types-click
-          - types-pyyaml
-          - pydantic>=2.0
-          - mcp>=1.0.0
-          - typer>=0.9.0
-          - rich>=13.0
-        args: [--ignore-missing-imports]
-        files: ^src/
-
+  # Unified Python verification (optimized profile by default)
   - repo: local
     hooks:
-      - id: basedpyright
-        name: basedpyright
-        entry: uv run basedpyright
+      - id: py-smart-verify
+        name: py-smart-verify
+        entry: uv run py-smart-verify verify --staged
         language: system
         types: [python]
-        pass_filenames: false
-
-  # Testing
-  - repo: local
-    hooks:
-      - id: pytest
-        name: pytest
-        # Exit code 5 = no tests collected (happens in CI with --smart on clean checkout)
-        entry: bash -c 'uv run pytest --smart --tb=short -q; rc=$?; [ $rc -eq 5 ] && exit 0 || exit $rc'
-        language: system
         pass_filenames: false
 
   # Conventional commits

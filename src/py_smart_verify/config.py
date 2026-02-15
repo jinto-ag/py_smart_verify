@@ -23,6 +23,13 @@ class RunMode(StrEnum):
     CONTINUE = "continue"
 
 
+class ToolProfile(StrEnum):
+    """Tool selection profile."""
+
+    OPTIMIZED = "optimized"
+    FULL = "full"
+
+
 class VerifyConfig(BaseModel):
     """Configuration for py-smart-verify runner."""
 
@@ -59,6 +66,12 @@ class VerifyConfig(BaseModel):
         default=False, description="Output JSON to stdout, suppress Rich output"
     )
     upgrade_deps: bool = Field(default=False, description="Upgrade tool dependencies")
+
+    # Tool profile
+    tool_profile: ToolProfile = Field(
+        default=ToolProfile.OPTIMIZED,
+        description="Tool profile: optimized (best per category) or full (all tools)",
+    )
 
     # Paths and directories
     project_root: Path = Field(default_factory=Path.cwd, description="Project root")

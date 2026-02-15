@@ -22,6 +22,7 @@ class MypyTask(BaseTask):
             aliases=["mypy"],
             cache_scope="quality",
             phase=2,
+            optimized=False,
         )
 
     def execute(self, paths: list[Path]) -> StepResult:
@@ -86,6 +87,7 @@ class PyrightTask(BaseTask):
             aliases=["pyright"],
             cache_scope="quality",
             phase=2,
+            optimized=False,
         )
 
     def execute(self, paths: list[Path]) -> StepResult:
