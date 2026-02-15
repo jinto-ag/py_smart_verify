@@ -568,21 +568,25 @@ class TestVersionAndHelp:
     def test_verify_help(self):
         result = runner.invoke(app, ["verify", "--help"])
         assert result.exit_code == 0
-        assert "--json" in result.output
-        assert "--no-cache" in result.output
-        assert "--skip-tests" in result.output
+        # Strip ANSI escape codes for CI compatibility
+        output = re.sub(r"\x1b\[[0-9;]*m", "", result.output)
+        assert "--json" in output
+        assert "--no-cache" in output
+        assert "--skip-tests" in output
 
     def test_graph_help(self):
         result = runner.invoke(app, ["graph", "--help"])
         assert result.exit_code == 0
-        assert "--json" in result.output
-        assert "--output" in result.output
+        output = re.sub(r"\x1b\[[0-9;]*m", "", result.output)
+        assert "--json" in output
+        assert "--output" in output
 
     def test_affected_help(self):
         result = runner.invoke(app, ["affected", "--help"])
         assert result.exit_code == 0
-        assert "--since" in result.output
-        assert "--staged" in result.output
+        output = re.sub(r"\x1b\[[0-9;]*m", "", result.output)
+        assert "--since" in output
+        assert "--staged" in output
 
     def test_regen_graph_help(self):
         result = runner.invoke(app, ["regen-graph", "--help"])

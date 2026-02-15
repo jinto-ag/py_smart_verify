@@ -14,7 +14,7 @@ import pytest
 
 pytest.importorskip("mcp")
 
-from py_verify.mcp_server import (  # noqa: E402  # isort: skip
+from py_verify.mcp_server import (  # isort: skip
     affected,
     config_resource,
     graph,
@@ -26,7 +26,7 @@ from py_verify.mcp_server import (  # noqa: E402  # isort: skip
     tasks_resource,
     verify,
 )
-from py_verify.mcp_server import mcp as mcp_instance  # noqa: E402  # isort: skip
+from py_verify.mcp_server import mcp as mcp_instance  # isort: skip
 
 # ─── verify tool ─────────────────────────────────────────────────────────
 
@@ -307,9 +307,8 @@ class TestMCPListTasksTool:
             "phase",
         }
         for task in data:
-            assert required_keys.issubset(
-                task.keys()
-            ), f"Task {task.get('name')} missing keys: {required_keys - set(task.keys())}"
+            missing = required_keys - set(task.keys())
+            assert required_keys <= set(task.keys()), f"Task {task.get('name')} missing: {missing}"
 
 
 # ─── last_run_resource ───────────────────────────────────────────────────

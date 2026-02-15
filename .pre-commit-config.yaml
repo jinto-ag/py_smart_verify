@@ -18,27 +18,26 @@ repos:
     rev: 7.0.0
     hooks:
       - id: isort
-        args: ["--profile", "black"]
 
   - repo: https://github.com/psf/black
-    rev: 24.10.0
+    rev: 26.1.0
     hooks:
       - id: black
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.8.4
+    rev: v0.15.1
     hooks:
       - id: ruff
         args: [--fix]
       - id: ruff-format
 
   - repo: https://github.com/pycqa/flake8
-    rev: 7.1.1
+    rev: 7.3.0
     hooks:
       - id: flake8
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.13.0
+    rev: v1.19.1
     hooks:
       - id: mypy
         additional_dependencies:
@@ -59,7 +58,7 @@ repos:
         entry: uv run pytest
         language: system
         pass_filenames: false
-        args: [--tb=short, -q]
+        args: [--smart, --tb=short, -q]
 
   # Conventional commits
   - repo: https://github.com/compilerla/conventional-pre-commit
