@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "py-verify": {
+      "command": "py-verify-mcp"
+    }
+  }
+}

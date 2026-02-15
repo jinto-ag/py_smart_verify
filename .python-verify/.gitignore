@@ -1,0 +1,4 @@
+# Ignore all files in .python-verify
+*
+# But keep this .gitignore
+!.gitignore
